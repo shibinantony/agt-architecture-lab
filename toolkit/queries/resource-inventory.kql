@@ -1,0 +1,6 @@
+// Purpose: summarize visible Azure resources by subscription, type, and location.
+// Status: static-review only; sandbox validation pending.
+// Safety: read-only query. Results are limited to the caller's authorized scope.
+Resources
+| summarize resourceCount = count() by subscriptionId, type, location
+| order by subscriptionId asc, resourceCount desc, type asc

@@ -1,0 +1,16 @@
+// Purpose: identify visible resources missing proposed workload allocation metadata.
+// Status: static-review only; sandbox validation pending.
+// Safety: read-only query. Tag presence does not prove value accuracy or cost allocation.
+Resources
+| extend workloadId = tostring(tags['WorkloadId'])
+| extend owner = tostring(tags['Owner'])
+| extend environment = tostring(tags['Environment'])
+| extend costCenter = tostring(tags['CostCenter'])
+| extend missingWorkloadId = isempty(workloadId)
+| extend missingOwner = isempty(owner)
+| extend missingEnvironment = isempty(environment)
+| extend missingCostCenter = isempty(costCenter)
+| where isempty(workloadId) or isempty(owner) or isempty(environment) or isempty(costCenter)
+| project subscriptionId, resourceGroup, name, type, location,
+    missingWorkloadId, missingOwner, missingEnvironment, missingCostCenter
+| order by subscriptionId asc, resourceGroup asc, type asc, name asc

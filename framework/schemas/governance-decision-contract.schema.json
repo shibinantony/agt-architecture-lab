@@ -1,0 +1,504 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/governance-evidence-lab/schemas/governance-decision-contract.schema.json",
+  "title": "Governance Decision Contract",
+  "description": "A technology-to-evidence contract for a bounded cloud-governance decision.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_id",
+    "title",
+    "status",
+    "information_classification",
+    "problem",
+    "scope",
+    "control",
+    "accountability",
+    "evidence",
+    "rollout",
+    "economics",
+    "review",
+    "assumptions",
+    "known_limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "contract_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9-]{2,63}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 160
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "source-supported",
+        "fixture-tested",
+        "sandbox-observed",
+        "limited-pilot-observed",
+        "revalidated",
+        "retired"
+      ]
+    },
+    "information_classification": {
+      "enum": [
+        "public-synthetic",
+        "internal",
+        "confidential"
+      ]
+    },
+    "problem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "business_outcome",
+        "risk_statement",
+        "beneficiary",
+        "baseline",
+        "evidence_status"
+      ],
+      "properties": {
+        "business_outcome": {
+          "type": "string",
+          "minLength": 10
+        },
+        "risk_statement": {
+          "type": "string",
+          "minLength": 10
+        },
+        "beneficiary": {
+          "type": "string",
+          "minLength": 3
+        },
+        "baseline": {
+          "type": "string",
+          "minLength": 3
+        },
+        "evidence_status": {
+          "enum": [
+            "unknown",
+            "assumption",
+            "source-supported",
+            "observed"
+          ]
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "azure_scope_level",
+        "scope_reference",
+        "included",
+        "excluded",
+        "criticality"
+      ],
+      "properties": {
+        "azure_scope_level": {
+          "enum": [
+            "none-local-fixture",
+            "tenant",
+            "management-group",
+            "subscription",
+            "resource-group",
+            "resource"
+          ]
+        },
+        "scope_reference": {
+          "type": "string",
+          "minLength": 3
+        },
+        "included": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "excluded": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "criticality": {
+          "enum": [
+            "learning",
+            "low",
+            "medium",
+            "high",
+            "mission-critical"
+          ]
+        }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "objective",
+        "control_type",
+        "mechanism",
+        "definition_reference",
+        "parameters"
+      ],
+      "properties": {
+        "objective": {
+          "type": "string",
+          "minLength": 10
+        },
+        "control_type": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "directive",
+              "preventive",
+              "detective",
+              "corrective"
+            ]
+          }
+        },
+        "mechanism": {
+          "type": "string",
+          "minLength": 3
+        },
+        "definition_reference": {
+          "type": "string",
+          "minLength": 3
+        },
+        "parameters": {
+          "type": "object"
+        }
+      }
+    },
+    "accountability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "business_risk_owner",
+        "control_owner",
+        "platform_operator",
+        "exception_authority",
+        "assurance_owner"
+      ],
+      "properties": {
+        "business_risk_owner": {
+          "$ref": "#/$defs/role"
+        },
+        "control_owner": {
+          "$ref": "#/$defs/role"
+        },
+        "platform_operator": {
+          "$ref": "#/$defs/role"
+        },
+        "exception_authority": {
+          "$ref": "#/$defs/role"
+        },
+        "assurance_owner": {
+          "$ref": "#/$defs/role"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sources",
+        "tests",
+        "freshness_expectation",
+        "retention",
+        "limitations"
+      ],
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceSource"
+          }
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/test"
+          }
+        },
+        "freshness_expectation": {
+          "type": "string",
+          "minLength": 3
+        },
+        "retention": {
+          "type": "string",
+          "minLength": 3
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "rollout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current_stage",
+        "planned_stages",
+        "scale_gate",
+        "rollback_trigger",
+        "rollback_owner",
+        "stop_rule"
+      ],
+      "properties": {
+        "current_stage": {
+          "$ref": "#/$defs/stage"
+        },
+        "planned_stages": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/stage"
+          }
+        },
+        "scale_gate": {
+          "type": "string",
+          "minLength": 10
+        },
+        "rollback_trigger": {
+          "type": "string",
+          "minLength": 10
+        },
+        "rollback_owner": {
+          "$ref": "#/$defs/role"
+        },
+        "stop_rule": {
+          "type": "string",
+          "minLength": 10
+        }
+      }
+    },
+    "economics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "currency",
+        "measurement_period",
+        "costs",
+        "benefits",
+        "delivery_friction_metric"
+      ],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "measurement_period": {
+          "type": "string",
+          "minLength": 3
+        },
+        "costs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/economicItem"
+          }
+        },
+        "benefits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/economicItem"
+          }
+        },
+        "delivery_friction_metric": {
+          "type": "string",
+          "minLength": 3
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "last_reviewed",
+        "next_review",
+        "triggers"
+      ],
+      "properties": {
+        "last_reviewed": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "next_review": {
+          "type": "string",
+          "format": "date"
+        },
+        "triggers": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "known_limits": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    }
+  },
+  "$defs": {
+    "role": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "stage": {
+      "enum": [
+        "local-fixture",
+        "read-only-baseline",
+        "sandbox-disabled",
+        "sandbox-audit",
+        "canary-audit",
+        "canary-enforce",
+        "staged-enforce",
+        "rolled-back",
+        "retired"
+      ]
+    },
+    "evidenceSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "reference",
+        "status"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "primary-documentation",
+            "local-fixture",
+            "azure-query",
+            "deployment-result",
+            "control-test",
+            "operating-record",
+            "financial-record"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 3
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "available",
+            "stale",
+            "unavailable",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "expected",
+        "status"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 3
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 3
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "passed",
+            "failed",
+            "blocked",
+            "not-applicable"
+          ]
+        }
+      }
+    },
+    "economicItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "description",
+        "amount",
+        "status",
+        "evidence"
+      ],
+      "properties": {
+        "category": {
+          "enum": [
+            "implementation-cost",
+            "operating-cost",
+            "delivery-friction",
+            "cash-saving",
+            "cost-avoidance",
+            "capacity-release",
+            "revenue-enablement",
+            "risk-reduction",
+            "recommendation-value"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 3
+        },
+        "amount": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "unknown",
+            "estimated",
+            "observed",
+            "finance-validated"
+          ]
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 3
+        }
+      }
+    }
+  }
+}

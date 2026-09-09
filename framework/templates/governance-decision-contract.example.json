@@ -1,0 +1,144 @@
+{
+  "schema_version": "0.1.0",
+  "contract_id": "GEL-DEMO-001",
+  "title": "Detect missing workload ownership and cost-allocation metadata",
+  "status": "proposed",
+  "information_classification": "public-synthetic",
+  "problem": {
+    "business_outcome": "Route cost and governance findings to an accountable synthetic workload owner.",
+    "risk_statement": "Resources without stable ownership and allocation metadata can create delayed remediation, unallocated spend, and weak accountability.",
+    "beneficiary": "Synthetic platform and FinOps teams",
+    "baseline": "Unknown until the local fixture and optional sandbox read-only query are evaluated.",
+    "evidence_status": "assumption"
+  },
+  "scope": {
+    "azure_scope_level": "none-local-fixture",
+    "scope_reference": "synthetic-estate-only",
+    "included": [
+      "Synthetic resources that support tags"
+    ],
+    "excluded": [
+      "Real tenants and resources",
+      "Resource types that do not support the selected metadata"
+    ],
+    "criticality": "learning"
+  },
+  "control": {
+    "objective": "Identify applicable resources missing an approved workload owner, environment, or cost-center value without changing the resource.",
+    "control_type": [
+      "detective"
+    ],
+    "mechanism": "Azure Resource Graph query for a future Reader-only sandbox assessment",
+    "definition_reference": "toolkit/queries/tag-coverage.kql",
+    "parameters": {
+      "required_tags": [
+        "WorkloadId",
+        "Owner",
+        "Environment",
+        "CostCenter"
+      ]
+    }
+  },
+  "accountability": {
+    "business_risk_owner": "Synthetic governance sponsor",
+    "control_owner": "Synthetic FinOps control owner",
+    "platform_operator": "Synthetic cloud platform team",
+    "exception_authority": "Synthetic governance product owner",
+    "assurance_owner": "Synthetic independent reviewer"
+  },
+  "evidence": {
+    "sources": [
+      {
+        "type": "primary-documentation",
+        "reference": "docs/source-register.md#cost-data",
+        "status": "available"
+      },
+      {
+        "type": "local-fixture",
+        "reference": "Synthetic fixture planned for roadmap phase 1",
+        "status": "planned"
+      }
+    ],
+    "tests": [
+      {
+        "name": "All required synthetic tags present",
+        "expected": "The resource is absent from the missing-metadata result.",
+        "status": "planned"
+      },
+      {
+        "name": "One required synthetic tag missing",
+        "expected": "The resource appears once with the missing field identified.",
+        "status": "planned"
+      },
+      {
+        "name": "Unsupported resource type",
+        "expected": "The resource is classified as not applicable rather than compliant.",
+        "status": "planned"
+      },
+      {
+        "name": "Inaccessible scope",
+        "expected": "Coverage is unknown and no compliance conclusion is produced.",
+        "status": "planned"
+      }
+    ],
+    "freshness_expectation": "Timestamp every run and state that Resource Graph can have indexing latency.",
+    "retention": "Keep only synthetic fixture output in the public repository.",
+    "limitations": [
+      "Tag presence does not prove tag accuracy or financial allocation.",
+      "Not every resource or charge supports the same tags.",
+      "The query has not yet been run against an Azure sandbox."
+    ]
+  },
+  "rollout": {
+    "current_stage": "local-fixture",
+    "planned_stages": [
+      "local-fixture",
+      "read-only-baseline"
+    ],
+    "scale_gate": "The fixture tests pass and a Reader-only sandbox run reports scope, pagination, failures, and unknowns correctly.",
+    "rollback_trigger": "The collector performs any write, exposes real identifiers, or misclassifies inaccessible scope as compliant.",
+    "rollback_owner": "Synthetic cloud platform team",
+    "stop_rule": "Stop before any policy assignment; a separate contract and authorization are required for Azure writes."
+  },
+  "economics": {
+    "currency": "USD",
+    "measurement_period": "One synthetic learning sprint",
+    "costs": [
+      {
+        "category": "implementation-cost",
+        "description": "Time to build and validate the synthetic query and fixture.",
+        "amount": null,
+        "status": "unknown",
+        "evidence": "Time tracking is not yet implemented."
+      }
+    ],
+    "benefits": [
+      {
+        "category": "recommendation-value",
+        "description": "Potential improvement in finding routing and allocation visibility.",
+        "amount": null,
+        "status": "unknown",
+        "evidence": "No sandbox observation or financial validation exists."
+      }
+    ],
+    "delivery_friction_metric": "Minutes required for a workload owner to understand and resolve one finding"
+  },
+  "review": {
+    "last_reviewed": "2026-09-09",
+    "next_review": "2026-10-09",
+    "triggers": [
+      "Azure Resource Graph query behavior changes",
+      "Cost Management tag guidance changes",
+      "The first synthetic fixture is added"
+    ]
+  },
+  "assumptions": [
+    "The proposed metadata fields are useful to a representative platform and finance team.",
+    "The query can be executed with Reader at the intended sandbox scope."
+  ],
+  "known_limits": [
+    "No synthetic estate fixture exists yet.",
+    "No Azure tenant behavior has been observed.",
+    "The example does not authorize a policy assignment or resource modification."
+  ]
+}

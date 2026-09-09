@@ -1,0 +1,35 @@
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.tmp
+~$*
+
+# Local environment and generated evidence
+.env
+.env.*
+!.env.example
+out/
+reports/
+evidence/
+*.local.json
+
+# Private AI-assistant conversations and continuity material
+# Keep session notes inside .local-conversation/ so they can never be published.
+.local-conversation/
+.conversations/
+.chat-history/
+.codex/
+.agents/
+*.private-conversation.md
+*.private-transcript.md
+
+# Azure and infrastructure tooling
+.azure/
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
