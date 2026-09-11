@@ -18,10 +18,10 @@ The default lab makes **no model API calls and no Azure changes**. It uses an or
 |---|---|---|
 | Offline demo | Python, YAML and synthetic tools | Repeatable allow, deny, approval, scope and budget behavior |
 | MCP integration | The same tools served to Codex or Gemini CLI | Enforcement on calls reaching this MCP server |
-| Actual AGT example | Pinned Microsoft AGT core 4.1.0 and its wrapper YAML | One allowed read; three denied actions never reach the handler |
+| Actual AGT example | Pinned Microsoft AGT development source and its wrapper YAML; native build required | One allowed read; three denied actions must never reach the handler |
 | Enterprise design | Architecture, operating model, FinOps and review templates | Decisions and additional controls needed for a pilot |
 
-Run the [actual AGT example](examples/upstream-agt/README.md) in its separate environment after the guided emulator lab. The [upstream reference](docs/agt-reference.md) also explains the newer ACS APIs and version differences.
+Run the [actual AGT example](examples/upstream-agt/README.md) in its separate environment after the guided emulator lab. It uses an immutable development snapshot because released packages constrain a security-sensitive dependency below its patched version. Its native build is an advanced exercise, separate from the beginner setup below. The [upstream reference](docs/agt-reference.md) explains the selected source, newer ACS APIs and version differences.
 
 MCP integration does not govern a client's other tools, shell, files, model traffic, or credentials. A real CLI session may incur provider charges. [Boundaries and verification](docs/technical-implementation.md).
 
@@ -38,6 +38,7 @@ From the repository root on Windows:
 
 ```powershell
 py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-bootstrap.txt
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m lab demo
 ```
@@ -46,6 +47,7 @@ On macOS/Linux:
 
 ```bash
 python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-bootstrap.txt
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m lab demo
 ```
@@ -106,7 +108,7 @@ The lab's monetary values are synthetic. They are neither vendor prices nor real
 
 ## Validation and maturity
 
-Install `requirements-dev.txt`, then run `python -m unittest discover -s tests -v`, `python tests/check_links.py` and `./tests/Test-Repository.ps1`. The [workflow](.github/workflows/repository-validation.yml) runs checks and the offline demo. The [validation record](docs/validation.md) separates local observations from untested live integrations.
+Install `requirements-bootstrap.txt` and then `requirements-dev.txt` in the isolated environment, then run `python -m unittest discover -s tests -v`, `python tests/check_links.py` and `./tests/Test-Repository.ps1`. The [workflow](.github/workflows/repository-validation.yml) runs checks and the offline demo. The [validation record](docs/validation.md) separates local observations from untested live integrations.
 
 The canonical repository name is `agt-architecture-lab`. Production isolation, distributed metering, authenticated approvals, cloud deployment and provider validation remain [explicit next gates](ROADMAP.md).
 

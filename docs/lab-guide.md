@@ -10,6 +10,7 @@ Install Python 3.11 or later if needed. Open a terminal in this repository. Wind
 
 ```powershell
 py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-bootstrap.txt
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m lab demo
 ```
@@ -18,6 +19,7 @@ macOS/Linux:
 
 ```bash
 python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-bootstrap.txt
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python -m lab demo
 ```

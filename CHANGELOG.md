@@ -9,6 +9,7 @@ All notable project changes will be recorded here.
 - Renamed the GitHub repository to `agt-architecture-lab` and updated its remote, canonical links, clone instructions and schema identifier.
 - Applied the MIT License to original code and documentation with the owner's explicit approval; added dependency attribution and updated contribution terms.
 - Repeated runtime, MCP, upstream AGT, document, dependency and publication-safety QA before the public launch.
+- Updated isolated installer/build tooling and added reproducible dependency-advisory scans. Moved the optional actual-AGT example from the released 4.1.0 package to an immutable development snapshot that permits patched cryptography 50.0.1; native-build requirements and release/source differences are explicit.
 
 ### Reworked — 2026-09-11
 

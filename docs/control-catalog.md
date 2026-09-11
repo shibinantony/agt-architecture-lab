@@ -8,7 +8,7 @@ last_verified: 2026-09-11
 
 Use this catalog to connect a business risk to a policy, test, evidence, and accountable owner. The `LAB-*` identifiers belong to this independent teaching implementation. They are not Microsoft AGT control identifiers or a compliance certification.
 
-Keep the implemented [emulator](../lab/runtime.py), the separate [released-AGT wrapper example](../examples/upstream-agt/README.md), and production control requirements distinct. The wrapper example has been tested with AGT 4.1.0 on Windows/Python 3.11.9: one allowed call and three denials, with only one handler execution. The controls below describe the emulator; they are not inferred properties of every upstream component. Select production components against their own configuration, integration, and [security guidance](https://github.com/microsoft/agent-governance-toolkit/blob/main/SECURITY.md).
+Keep the implemented [emulator](../lab/runtime.py), the separate [AGT snapshot wrapper exercise](../examples/upstream-agt/README.md), and production control requirements distinct. The wrapper targets development commit `0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf`, whose core metadata version is 5.0.0, rather than a released package. Its expected result is one allowed call and three denials, with only one handler execution; see [validation](validation.md) for actual platform/results. The controls below describe the emulator; they are not inferred properties of every upstream component. Select production components against their own configuration, integration, and [security guidance](https://github.com/microsoft/agent-governance-toolkit/blob/main/SECURITY.md).
 
 ## Implemented local controls
 

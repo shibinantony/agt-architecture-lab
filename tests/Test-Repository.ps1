@@ -14,6 +14,8 @@ $requiredFiles = @(
     'NOTICE.md',
     'LICENSE.md',
     'THIRD-PARTY-NOTICES.md',
+    'requirements-bootstrap.txt',
+    'requirements-audit.txt',
     'docs/source-register.md',
     'framework/prove-method.md',
     'framework/schemas/governance-decision-contract.schema.json',

@@ -43,7 +43,7 @@ After running the offline demo and reviewing its artifacts, an engineer can clai
 
 For example, record action control as “repeatable for the supplied local scenarios; deployment and bypass coverage unknown.” Keep enterprise identity and operational response “unassessed” until evidence exists. Do not average these into a misleading “production ready” score.
 
-The separate [released-AGT example](../examples/upstream-agt/README.md) adds observed wrapper behavior for AGT 4.1.0: one allowed request, three denied requests, and one handler execution on Windows/Python 3.11.9. Record that as a distinct implementation and test scope. It does not raise the maturity of enterprise identity, approvals, distributed accounting, ACS integration, or production operations.
+The separate [AGT source-snapshot exercise](../examples/upstream-agt/README.md) targets development commit `0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf` with core metadata version 5.0.0. A successful assertion run means one allowed request, three denied requests, and one handler execution. Use the [validation record](validation.md) for actual platform/results, and record the source commit as well as the package version. This distinct wrapper test scope does not raise the maturity of enterprise identity, approvals, distributed accounting, ACS integration, or production operations.
 
 ## Assessment record
 

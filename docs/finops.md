@@ -72,7 +72,7 @@ Cost per accepted report is **$700 / 800 = $0.875**. Dividing only model cost by
 
 ## From a local allowance to a production budget
 
-The [AGT reference](agt-reference.md) distinguishes upstream cost-governance designs from the emulator's admission check. The separate released-wrapper example validates allow/deny behavior; it does not validate AGT cost accounting or provider metering.
+The [AGT reference](agt-reference.md) distinguishes upstream cost-governance designs from the emulator's admission check. The separate source-pinned wrapper exercise checks allow/deny behavior, with observed results in the [validation record](validation.md); it does not validate AGT cost accounting or provider metering.
 
 The following is a proposed production design, beyond the lab's fixed per-process counter:
 

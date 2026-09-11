@@ -1,2 +1,6 @@
-# Released upstream API; do not combine with current main's ACS examples.
-agent-governance-toolkit-core==4.1.0
+# Reviewed, unmodified DEVELOPMENT SNAPSHOT, not the similarly numbered PyPI wheel.
+# Its upstream metadata supports patched cryptography; released 4.1/5.0 do not.
+# Transitive ACS currently builds a native extension: Rust/Cargo and a C linker
+# are required when no matching platform wheel is available.
+agent-governance-toolkit-core @ https://github.com/microsoft/agent-governance-toolkit/archive/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf.zip#subdirectory=agent-governance-python/agent-governance-toolkit-core
+cryptography==50.0.1

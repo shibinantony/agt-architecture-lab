@@ -9,6 +9,7 @@ This is a custom MCP integration, not a claim that Microsoft supplies a native A
 From the repository root, install optional dependencies using the virtual environment's Python:
 
 ```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-bootstrap.txt
 .\.venv\Scripts\python.exe -m pip install -r requirements-mcp.txt
 .\.venv\Scripts\python.exe integrations/mcp_server.py --help
 ```

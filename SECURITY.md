@@ -10,6 +10,10 @@ Its configuration, process, fixture and filesystem are trusted. Local actor valu
 
 The upstream example validates only the installed AGT wrapper and supplied synthetic cases. It does not test the full toolkit's identity, isolation, approval, ACS or fleet capabilities. [Upstream example scope](examples/upstream-agt/README.md).
 
+## Dependency maintenance
+
+Install the pinned bootstrap tools before lab dependencies. The optional actual-AGT example uses an immutable development source snapshot and cryptography 50.0.1: the released core 4.1.0 and 5.0.0 distributions constrain cryptography below the version fixing [CVE-2026-69247](https://github.com/pyca/cryptography/security/advisories/GHSA-g6cj-pr64-35w5). Do not substitute those wheels, disable dependency resolution or suppress the advisory to make installation succeed. This source-build choice is not a production recommendation; replace it with a reviewed compatible release when available. Follow the [dependency audit instructions](docs/validation.md#dependency-advisory-scan) and recheck results when upgrading.
+
 ## Handling data and credentials
 
 Use synthetic inputs. Do not commit provider keys, tokens, connection strings, real inventory, invoices, identity details, client/employer data or private conversation records. Generated sessions and local CLI settings are ignored by Git, but ignored files still need suitable local access controls.

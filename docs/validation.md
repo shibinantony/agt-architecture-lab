@@ -18,14 +18,16 @@ Environment: Windows, Python 3.11.9. Core dependency: PyYAML 6.0.3; MCP SDK: 1.3
 | Runtime tests | 20 tests cover fixture results, denied/pending dispatch, scope/classification, caller overrides, malformed policy, concurrency and audit failure before/after execution |
 | MCP protocol tests | 4 tests launch a real stdio server and use the SDK client; discovery, structured replies, denial, pending approval, malformed arguments, cumulative budget and startup failure |
 | Decision contracts | Both original Azure and new agent examples validated against JSON Schema, including date formats |
-| Actual Microsoft AGT | Separate environment with core 4.1.0; 1 allow, 3 denials, exactly 1 synthetic handler execution; dependency check passes |
+| Original upstream check | Released core 4.1.0 passed 1 allow, 3 denials and 1 handler execution on Windows; superseded because the dependency audit found vulnerable cryptography |
+| Current upstream source | Pinned development snapshot 5.0.0 with cryptography 50.0.1; Windows installation failed at native ACS build metadata. The separate Linux CI job is the execution gate |
+| Source provenance | 5 dependency-independent tests check required package/cryptography versions, archive/VCS origin and wrong/missing source metadata |
 | CLI setup commands | Codex and Gemini MCP registration syntax checked against official documentation and installed help |
 
 The MCP tests required normal permission to create Windows subprocess pipes. That is a local test-runner permission, not an agent authorization control.
 
 ## CI
 
-The [validation workflow](../.github/workflows/repository-validation.yml) runs runtime/MCP/schema tests and the demo on Windows and Ubuntu, checks repository links/JSON/encoding, and uploads synthetic demo evidence for seven days. A separate Ubuntu job installs and exercises actual AGT 4.1.0. Workflow results are available under [GitHub Actions](https://github.com/shibinantony/agt-architecture-lab/actions).
+The [validation workflow](../.github/workflows/repository-validation.yml) runs 30 runtime/MCP/schema/provenance tests and the demo on Windows and Ubuntu, checks repository links/JSON/encoding, and uploads synthetic demo evidence for seven days. A separate Ubuntu job builds the pinned upstream development source, exercises its AgentMesh wrapper and audits installed dependencies. Workflow results are available under [GitHub Actions](https://github.com/shibinantony/agt-architecture-lab/actions).
 
 CI configuration is executable; use the run result for the commit being reviewed as evidence. Do not interpret a workflow file alone as a passed cross-platform test.
 
@@ -36,6 +38,8 @@ The canonical repository is [shibinantony/agt-architecture-lab](https://github.c
 The publication pass repeats the runtime/MCP/schema tests, actual AGT example, dependency compatibility checks and documentation checks. `tests/check_links.py` checks local paths, heading fragments and contract references; `--external` separately checks HTTP reachability. A reachable link does not validate the linked claim.
 
 Prepublication review includes all reachable Git commits, current tracked files and GitHub Actions logs/artifacts. Local environments, generated evidence, credentials/configuration and private conversation directories remain excluded from Git. Secret-pattern and dependency-advisory scans have bounded coverage and do not prove the absence of every possible vulnerability.
+
+The local lab audit on 2026-09-11 checked 33 installed packages with pip-audit 2.10.1: zero skipped packages and no known vulnerabilities after updating pip and setuptools. The released upstream installation exposed cryptography advisories; it is no longer the documented installation path. The pinned-source choice and its native build requirement are explained in the [upstream example](../examples/upstream-agt/README.md).
 
 ## What has not been established
 
@@ -50,6 +54,7 @@ The [architecture](architecture.md) and [roadmap](../ROADMAP.md) describe those 
 ## Reproduce
 
 ```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-bootstrap.txt
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 .\.venv\Scripts\python.exe -m lab demo
@@ -58,3 +63,17 @@ The [architecture](architecture.md) and [roadmap](../ROADMAP.md) describe those 
 ```
 
 Use `.venv/bin/python` on macOS/Linux. Follow the separate [upstream example](../examples/upstream-agt/README.md) for AGT, and the [client guide](cli-integration.md) for optional live acceptance tests.
+
+### Dependency advisory scan
+
+Run the scanner in a separate tools environment so its dependencies do not change the environments under test. From the repository root on Windows:
+
+```powershell
+py -3 -m venv artifacts/qa-venv
+.\artifacts\qa-venv\Scripts\python.exe -m pip install -r requirements-bootstrap.txt
+.\artifacts\qa-venv\Scripts\python.exe -m pip install -r requirements-audit.txt
+.\artifacts\qa-venv\Scripts\python.exe -m pip_audit --path .venv/Lib/site-packages --strict
+.\artifacts\qa-venv\Scripts\python.exe -m pip_audit --path .venv-agt/Lib/site-packages --strict
+```
+
+On Linux/macOS, use `python3` to create the environment and `artifacts/qa-venv/bin/python` to run the scanner. Get each target's installed-package directory with that environment's interpreter: `python -c "import sysconfig; print(sysconfig.get_path('purelib'))"`, then pass it to `--path`. The second scan requires the optional upstream environment to have been installed first. Scans require network access and send package names/versions to the advisory service. Do not silently suppress failures or skipped packages. Results are a dated inventory/advisory check, not a source-code security assessment or guarantee of future safety.

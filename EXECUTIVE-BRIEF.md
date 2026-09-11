@@ -7,7 +7,7 @@ owner: Shibin Antony
 
 # Executive brief: Microsoft Agent Governance Toolkit (AGT) — Architecture Review & Hands-on Lab
 
-This is an independent companion to Microsoft's [Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit), the upstream project for governing AI agent actions. Azure is the example enterprise environment. The repository provides an original teaching emulator, a separate [working example of released AGT 4.1.0](examples/upstream-agt/README.md), and an adoption framework. The two executable examples have distinct implementations and tested scopes.
+This is an independent companion to Microsoft's [Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit), the upstream project for governing AI agent actions. Azure is the example enterprise environment. The repository provides an original teaching emulator, a separate [AGT source-snapshot exercise](examples/upstream-agt/README.md), and an adoption framework. The two examples have distinct implementations and validation scopes.
 
 ## The business decision
 
@@ -27,7 +27,7 @@ Run the [hands-on lab](docs/lab-guide.md) or have an engineer present its eviden
 
 That lets leadership examine a decision trail: requested action, applicable policy, decision, outcome, and budget effect. The default run uses fixtures and makes no cloud or model calls. Its results demonstrate local policy behavior; they do not measure production incident reduction, provider spending, or ROI.
 
-The separate released-AGT example was verified on Windows with Python 3.11.9: one permitted request executed and three denied requests did not reach the handler. That establishes the tested wrapper's behavior for four synthetic requests, not production readiness, native ACS execution, or an end-to-end model-provider integration.
+The separate AGT exercise targets a pinned development snapshot whose core package reports version 5.0.0; it is not a released-package installation. Its assertions require one permitted request to execute and three denied requests to remain outside the handler. See the [validation record](docs/validation.md) for the tested platform and results. These four synthetic requests address wrapper behavior, not production readiness, ACS conformance, or an end-to-end model-provider integration.
 
 The optional MCP route lets a configured Codex or Gemini CLI client request these guarded tools. Its boundary is those tools. Other shell commands, connections, credentials, and model requests require their own controls. See the [architecture](docs/architecture.md) for the full integration and bypass paths.
 

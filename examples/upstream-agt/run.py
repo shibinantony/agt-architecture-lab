@@ -1,21 +1,56 @@
-"""Exercise the actual released AGT wrapper with an in-memory synthetic tool."""
+"""Exercise an exact upstream AGT development snapshot with a synthetic tool."""
 
-from importlib.metadata import version
+import json
+from importlib.metadata import distribution, version
 from pathlib import Path
 
-from agentmesh.governance import GovernanceDenied, govern
+
+EXPECTED_PACKAGE_VERSION = "5.0.0"
+EXPECTED_SOURCE_COMMIT = "0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf"
+EXPECTED_REPOSITORY_URL = "https://github.com/microsoft/agent-governance-toolkit"
+EXPECTED_SOURCE_URL = f"{EXPECTED_REPOSITORY_URL}/archive/{EXPECTED_SOURCE_COMMIT}.zip"
+EXPECTED_SUBDIRECTORY = "agent-governance-python/agent-governance-toolkit-core"
+EXPECTED_CRYPTOGRAPHY_VERSION = "50.0.1"
 
 
-EXPECTED_PACKAGE_VERSION = "4.1.0"
+def verify_installation() -> str:
+    """Reject the PyPI wheel sharing version 5.0.0 and any other source revision.
+
+    PEP 610 metadata records installation provenance. This check catches a wrong
+    environment; editable local metadata is not a cryptographic attestation.
+    It deliberately runs before importing or invoking the upstream toolkit.
+    """
+    installed = distribution("agent-governance-toolkit-core")
+    if installed.version != EXPECTED_PACKAGE_VERSION:
+        raise RuntimeError(
+            f"This example requires agent-governance-toolkit-core=="
+            f"{EXPECTED_PACKAGE_VERSION} from the pinned development snapshot; "
+            f"installed version is {installed.version}."
+        )
+    try:
+        provenance = json.loads(installed.read_text("direct_url.json") or "null")
+    except (TypeError, json.JSONDecodeError) as exc:
+        raise RuntimeError("The installed AGT package has invalid source provenance metadata.") from exc
+    if not isinstance(provenance, dict):
+        raise RuntimeError("The installed AGT package lacks pinned-source provenance; the PyPI wheel is not supported by this example.")
+    archive_matches = provenance.get("url") == EXPECTED_SOURCE_URL
+    vcs_info = provenance.get("vcs_info", {})
+    vcs_matches = (
+        isinstance(vcs_info, dict)
+        and provenance.get("url") in {EXPECTED_REPOSITORY_URL, EXPECTED_REPOSITORY_URL + ".git"}
+        and vcs_info.get("vcs") == "git"
+        and vcs_info.get("commit_id") == EXPECTED_SOURCE_COMMIT
+    )
+    if provenance.get("subdirectory") != EXPECTED_SUBDIRECTORY or not (archive_matches or vcs_matches):
+        raise RuntimeError("The installed AGT package does not match the reviewed upstream source commit and package directory.")
+    if version("cryptography") != EXPECTED_CRYPTOGRAPHY_VERSION:
+        raise RuntimeError(f"This example requires the reviewed cryptography=={EXPECTED_CRYPTOGRAPHY_VERSION} pin.")
+    return installed.version
 
 
 def main() -> None:
-    installed = version("agent-governance-toolkit-core")
-    if installed != EXPECTED_PACKAGE_VERSION:
-        raise RuntimeError(
-            f"This example requires agent-governance-toolkit-core=="
-            f"{EXPECTED_PACKAGE_VERSION}; installed version is {installed}."
-        )
+    installed = verify_installation()
+    from agentmesh.governance import GovernanceDenied, govern
 
     executed_actions: list[str] = []
 
@@ -49,7 +84,10 @@ def main() -> None:
 
     if executed_actions != ["read_catalog"]:
         raise AssertionError("The synthetic handler executed an unexpected action.")
-    print(f"PASS: actual AGT {installed}; 1 allow, 3 denials, 1 handler execution")
+    print(
+        f"PASS: actual AGT development snapshot {EXPECTED_SOURCE_COMMIT}; "
+        f"package {installed}; 1 allow, 3 denials, 1 handler execution"
+    )
 
 
 if __name__ == "__main__":

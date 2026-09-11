@@ -6,7 +6,7 @@ last_verified: 2026-09-11
 
 # Learning paths: from a first policy decision to an adoption decision
 
-Start with the official [Microsoft Agent Governance Toolkit (AGT) repository](https://github.com/microsoft/agent-governance-toolkit) to identify the project. This independent lab provides a small original emulator and a separate [released-AGT example](../examples/upstream-agt/README.md). Begin with the emulator's Azure inventory task, then compare its policy decisions with the real wrapper. Agent actions, evidence, and operating choices are the subject.
+Start with the official [Microsoft Agent Governance Toolkit (AGT) repository](https://github.com/microsoft/agent-governance-toolkit) to identify the project. This independent lab provides a small original emulator and a separate [AGT source-snapshot exercise](../examples/upstream-agt/README.md). Begin with the emulator's Azure inventory task, then compare its policy decisions with the real wrapper. Agent actions, evidence, and operating choices are the subject.
 
 The paths below produce different artifacts. Engineers run and challenge the controls; architects establish where they apply; directors establish who operates them; CXOs decide whether the outcome warrants investment. Time estimates are suggestions, not prerequisites or completion claims.
 
@@ -66,11 +66,11 @@ The paths below produce different artifacts. Engineers run and challenge the con
 2. Follow the [lab guide](lab-guide.md) to connect either Codex or Gemini CLI through the optional MCP server. Request inventory, then request deletion. Keep the server's returned decisions and session evidence as the proof, not just the assistant's narrative.
 3. Draw the boundary around this MCP server. List shell execution, other MCP servers, direct cloud credentials, and model calls that can occur elsewhere. Do not test real deletion; document how production credentials and network rules would prevent an alternate route.
 4. Build a failure matrix covering malformed policy, evidence-write failure, concurrent spending, process restart, duplicate requests, approval expiry, and a policy change between review and execution. Mark each as tested, unsupported by the lab, or requiring a production design.
-5. Run the [released-AGT example](../examples/upstream-agt/README.md) in its separate environment. It pins `agent-governance-toolkit-core==4.1.0` and expects one allowed request, three denials, and exactly one handler execution. Compare its YAML schema, host enforcement, identity assumptions, and evidence with the emulator. The wrapper example was verified on Windows/Python 3.11.9; record your own platform and result. Review the newer ACS path in the [AGT reference](agt-reference.md) as a separate experiment; these YAML formats are not interchangeable.
+5. Follow the [AGT source-snapshot exercise](../examples/upstream-agt/README.md) in its separate environment, including its platform and native-build prerequisites. It pins development commit `0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf`, whose core metadata version is 5.0.0; installing the released package with that version number is a different operation. The assertions expect one allowed request, three denials, and exactly one handler execution. Compare its YAML schema, host enforcement, identity assumptions, and evidence with the emulator. Use [validation](validation.md) for tested platform/results and record your own result. Review ACS in the [AGT reference](agt-reference.md) as a separate experiment; the YAML formats are not interchangeable.
 
 **Expected result:** evidence for the exercised guarded tools plus an explicit gap list. The emulator does not become an enterprise identity service, durable approval system, model gateway, or distributed budget ledger when connected to a client.
 
-**Checkpoint:** a reviewer can distinguish the emulator run, a live client-to-lab run, the verified released-AGT wrapper example, and a newer ACS experiment. The wrapper's four exercised requests do not establish provider integration or ACS compatibility; record any experiment you did not run as unperformed.
+**Checkpoint:** a reviewer can distinguish the emulator run, a live client-to-lab run, the pinned development-snapshot wrapper exercise, and an ACS experiment. Four passing wrapper requests do not establish provider integration or ACS compatibility; record any experiment you did not run as unperformed.
 
 ## Architect: place the control in the real system
 

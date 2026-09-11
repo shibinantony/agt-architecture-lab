@@ -1,0 +1,4 @@
+# Audited installer/build tooling for the isolated Python 3.11+ environments.
+# Install before the selected lab/example requirements; never use system Python.
+pip==26.2.1
+setuptools==83.0.0

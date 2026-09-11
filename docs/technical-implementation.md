@@ -13,13 +13,15 @@ The runnable implementation is a Python 3.11+ policy emulator around five synthe
 | [integrations/mcp_server.py](../integrations/mcp_server.py) | Stdio MCP interface using the same runtime |
 | [tests/test_lab.py](../tests/test_lab.py) | Negative, budget, concurrency, policy and evidence failure cases |
 | [tests/test_mcp.py](../tests/test_mcp.py) | Actual subprocess/stdio discovery and calls using the MCP client SDK |
+| [requirements-bootstrap.txt](../requirements-bootstrap.txt) | Pinned environment tooling: pip 26.2.1 and setuptools 83.0.0; install before lab/example dependencies |
 | [requirements.txt](../requirements.txt) | Core dependency pin |
 | [requirements-mcp.txt](../requirements-mcp.txt) | Optional MCP dependency pin |
 | [requirements-dev.txt](../requirements-dev.txt) | Test dependencies |
+| [requirements-audit.txt](../requirements-audit.txt) | Optional dependency scanner in a separate tools environment; see [reproducible audit steps](validation.md) |
 
 The MCP dependency intentionally uses the maintained v1 SDK API at `mcp==1.30.0`. Version 2 is a different API; upgrades require migration and protocol tests. [Official SDK v1 source](https://github.com/modelcontextprotocol/python-sdk/tree/v1.30.0). Direct dependencies are pinned; this is not a platform-independent lock of every transitive dependency.
 
-The separate [actual AGT example](../examples/upstream-agt/README.md) uses Microsoft's core 4.1.0 package and its AgentMesh wrapper policy in an isolated environment. Its allow/deny assertions are executed independently; it is not the implementation behind this MCP server.
+The separate [actual AGT exercise](../examples/upstream-agt/README.md) targets Microsoft's unmodified development source at commit `0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf`, whose core package metadata reports 5.0.0. This is a source-snapshot installation, not the released package of the same version. Follow the example's isolated-environment and native-build instructions, and consult [validation](validation.md) for tested platform/results. Its four synthetic wrapper requests are separate from the emulator and are not the implementation behind this MCP server.
 
 ## Enforcement order
 

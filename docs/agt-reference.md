@@ -1,6 +1,6 @@
 ---
 status: source-reviewed-and-wrapper-tested
-tested_scope: upstream-source-review-and-released-wrapper-synthetic-smoke-test
+tested_scope: upstream-source-review-and-version-specific-wrapper-synthetic-smoke-test
 last_verified: 2026-09-11
 ---
 
@@ -10,20 +10,23 @@ last_verified: 2026-09-11
 
 Azure governance is the surrounding cloud discipline: resource organization, identity, infrastructure policy, monitoring and financial accountability. AGT adds controls to agent execution within that environment. Calling the upstream project “Azure Governance Toolkit” would obscure this distinction. See the [integration architecture](architecture.md) for how both layers work together.
 
-This repository is an independent educational companion. Its original simulator demonstrates selected governance ideas; an [optional working upstream example](../examples/upstream-agt/README.md) exercises Microsoft's released package directly. The [upstream charter](https://github.com/microsoft/agent-governance-toolkit/blob/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf/CHARTER.md) identifies the project, MIT license and Microsoft marks. See our [project notice](../NOTICE.md) for attribution.
+This repository is an independent educational companion. Its original simulator demonstrates selected governance ideas; an [optional upstream example](../examples/upstream-agt/README.md) exercises Microsoft's wrapper from a pinned development snapshot. It is a native-build exercise, not the beginner setup. The [upstream charter](https://github.com/microsoft/agent-governance-toolkit/blob/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf/CHARTER.md) identifies the project, MIT license and Microsoft marks. See our [project notice](../NOTICE.md) for attribution.
 
 ## Read the right version
 
-The source review on 2026-09-11 found an important difference between the published GitHub release and development code:
+The source review on 2026-09-11 found important differences between GitHub release metadata, PyPI distributions and development code:
 
 | Reference | Observed version | How to use it |
 |---|---|---|
-| [Latest GitHub release](https://github.com/microsoft/agent-governance-toolkit/releases/tag/v4.1.0) | `v4.1.0`, published 2026-06-09 | Follow examples and package metadata from this release when evaluating the released API |
+| [Latest GitHub release](https://github.com/microsoft/agent-governance-toolkit/releases/tag/v4.1.0) | `v4.1.0`, published 2026-06-09 | Historical release/API reference; not the current lab installer |
 | [Release source](https://github.com/microsoft/agent-governance-toolkit/tree/0de71ca6c95cf8b9b975ac96f48eaa7826bbe258) | `0de71ca6c95cf8b9b975ac96f48eaa7826bbe258` | Immutable source reference for the release |
-| [Reviewed development source](https://github.com/microsoft/agent-governance-toolkit/tree/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf) | `0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf` | Source reference for the ACS transition discussed below |
+| [PyPI core distribution](https://pypi.org/project/agent-governance-toolkit-core/5.0.0/) | `5.0.0` | Newer than the GitHub release metadata; its cryptography upper bound still excludes the patched version |
+| [Reviewed development source](https://github.com/microsoft/agent-governance-toolkit/tree/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf) | `0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf`, core source metadata `5.0.0` | Current optional example pin; differs from the same-numbered PyPI wheel and permits cryptography 50.0.1 |
 | [ACS Python package metadata](https://github.com/microsoft/agent-governance-toolkit/blob/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf/policy-engine/sdk/python/pyproject.toml) | `agent-control-specification` source version `0.3.1b1`, Python 3.11+ | A different package/version from the toolkit release; source metadata alone does not establish an installed wheel version |
 
 The [upstream README](https://github.com/microsoft/agent-governance-toolkit/blob/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf/README.md) describes Public Preview status. Treat a release, a package version, a policy schema and a source commit as four separate identifiers. Record all four in a real evaluation. A successful lab run establishes the behavior of this lab; it does not establish production readiness for every upstream component.
+
+The publication audit found that released core 4.1.0 requires cryptography below 49 and PyPI core 5.0.0 requires it below 50. The [PKCS#7 advisory](https://github.com/pyca/cryptography/security/advisories/GHSA-g6cj-pr64-35w5) is fixed in cryptography 50.0.0. The selected source permits versions below 51; the optional example pins 50.0.1 and retains normal dependency resolution. It also introduces native ACS build dependencies. See the [setup and limitations](../examples/upstream-agt/README.md) before choosing this development-source exercise.
 
 ## What the components do
 
@@ -58,9 +61,9 @@ In the reviewed development source, ACS is the policy runtime and the former Age
 
 ## Two upstream examples to study
 
-For the released wrapper API, start with the [v4.1.0 wrapper source](https://github.com/microsoft/agent-governance-toolkit/blob/0de71ca6c95cf8b9b975ac96f48eaa7826bbe258/agent-governance-python/agent-mesh/src/agentmesh/governance/govern.py). It exposes `govern(callable, policy=..., agent_id=...)`; denied calls raise `GovernanceDenied` before the wrapped function runs. The [release package metadata](https://github.com/microsoft/agent-governance-toolkit/blob/0de71ca6c95cf8b9b975ac96f48eaa7826bbe258/agent-governance-python/agent-governance-toolkit-core/pyproject.toml) places that implementation in `agent-governance-toolkit-core==4.1.0` and requires Python 3.11+. Use an isolated environment and record resolved dependencies if evaluating this older release.
+For historical comparison, the [v4.1.0 wrapper source](https://github.com/microsoft/agent-governance-toolkit/blob/0de71ca6c95cf8b9b975ac96f48eaa7826bbe258/agent-governance-python/agent-mesh/src/agentmesh/governance/govern.py) exposes `govern(callable, policy=..., agent_id=...)`; denied calls raise `GovernanceDenied` before the wrapped function runs. The [release package metadata](https://github.com/microsoft/agent-governance-toolkit/blob/0de71ca6c95cf8b9b975ac96f48eaa7826bbe258/agent-governance-python/agent-governance-toolkit-core/pyproject.toml) places that implementation in core 4.1.0 and requires Python 3.11+. This older distribution is not the recommended installer because of the dependency issue above.
 
-The [local upstream example](../examples/upstream-agt/README.md) provides that isolated setup, an original YAML policy and a self-checking script. On 2026-09-11 it passed on Windows with CPython 3.11.9: one permitted request executed, three denied requests never reached the handler, and package dependency checks passed. This is actual released AGT execution against synthetic data. It does not validate the newer ACS path or a provider-backed agent session.
+The [local upstream example](../examples/upstream-agt/README.md) now supplies an isolated source-build setup, an original YAML policy and a self-checking script. It checks the exact source origin as well as package versions, then expects one permitted request to execute and three denied requests never to reach the handler. The [validation record](validation.md) distinguishes the original Windows 4.1.0 smoke test, the failed Windows native-source installation, and the current Linux CI gate. This is an AgentMesh wrapper exercise, not validation of the newer ACS execution path or a provider-backed session.
 
 For the newer ACS host model, the [pinned email-tool walkthrough](https://github.com/microsoft/agent-governance-toolkit/tree/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf/examples/acs-email-tool) is especially instructive. It uses synthetic recipients and a local stand-in for sending email. The example demonstrates allow, argument transformation and deny without a model credential. Its setup builds the SDK from the same repository checkout; source builds require the native build toolchain. Keep the checkout and example at the same commit.
 
@@ -72,7 +75,7 @@ The sequence in its [host code](https://github.com/microsoft/agent-governance-to
 4. If transformation is required, use `transformed_policy_target` as the tool arguments.
 5. Invoke the tool only after the permitted decision, then record the completed call.
 
-The newer ACS example was source-reviewed for this guide; its native runtime was not executed in this validation. The released wrapper example and the original simulator have separate test scopes. The [technical guide](technical-implementation.md) identifies the executable paths and tests provided here.
+The newer ACS example was source-reviewed for this guide; its native runtime was not executed in this validation. The source-pinned AgentMesh wrapper example and the original simulator have separate test scopes. The [technical guide](technical-implementation.md) identifies the executable paths and tests provided here.
 
 ## Migration details that change outcomes
 

@@ -18,6 +18,8 @@ The project now studies agent runtime governance. AGT stands for **Agent Governa
 |---|---|---|---|
 | Microsoft AGT | [Official repository](https://github.com/microsoft/agent-governance-toolkit) | Project identity and entry point to source, examples and releases | 2026-09-11 |
 | Released AGT API | [v4.1.0 source](https://github.com/microsoft/agent-governance-toolkit/tree/0de71ca6c95cf8b9b975ac96f48eaa7826bbe258) | Release-specific package and wrapper interface | 2026-09-11 |
+| Current optional source pin | [Core metadata at the selected commit](https://github.com/microsoft/agent-governance-toolkit/blob/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf/agent-governance-python/agent-governance-toolkit-core/pyproject.toml) | Development source version 5.0.0 permits cryptography 50.0.1; differs from PyPI 5.0.0 | 2026-09-11 |
+| Dependency security gate | [Cryptography advisory](https://github.com/pyca/cryptography/security/advisories/GHSA-g6cj-pr64-35w5) | PKCS#7 issue fixed in 50.0.0; explains why older constrained distributions were replaced | 2026-09-11 |
 | ACS transition | [Pinned breaking changes](https://github.com/microsoft/agent-governance-toolkit/blob/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf/BREAKING_CHANGES.md) | Current development APIs and schemas differ from older releases | 2026-09-11 |
 | MCP transport | [Protocol architecture](https://modelcontextprotocol.io/docs/learn/architecture) | Client/server tool discovery and invocation | 2026-09-11 |
 | Python MCP | [SDK v1.30.0](https://github.com/modelcontextprotocol/python-sdk/tree/v1.30.0) | API version pinned by the optional lab server | 2026-09-11 |

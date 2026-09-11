@@ -9,7 +9,7 @@ The current milestone is an executable learning companion to Microsoft Agent Gov
 - Original strict YAML policy emulator with synthetic tools, default denial, approval stops, scope/classification checks and a cumulative local allowance.
 - Structured evidence, summaries and negative/concurrency/failure tests.
 - Stdio MCP server and real protocol tests for client integration.
-- Separate pinned actual Microsoft AGT 4.1.0 example with verified allow/deny behavior.
+- Separate actual Microsoft AGT wrapper exercise pinned to development commit `0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf` (core metadata version 5.0.0); platform execution and dependency-audit results are tracked in the validation record.
 - Enterprise architecture, FinOps worked example, ownership, control catalog and agent decision contract.
 - CI jobs for the emulator, MCP, documents, schema and upstream example.
 
@@ -25,7 +25,7 @@ Run the documented workflow through an authenticated Codex and Gemini CLI sessio
 
 Choose a matching source/package/schema/adapter combination from the [upstream reference](docs/agt-reference.md). Exercise verdicts, transformed arguments, all bound intervention points, errors and upgrade compatibility in an isolated environment.
 
-**Exit gate:** observed behavior for the selected API and workload; no mixing of released wrapper YAML with current ACS examples.
+**Exit gate:** observed behavior for the selected API and workload; no mixing of wrapper YAML with ACS manifests from another API or version.
 
 ## Next: operated sandbox pilot
 

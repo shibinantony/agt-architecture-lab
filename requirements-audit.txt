@@ -1,0 +1,2 @@
+# Keep the advisory scanner in a separate tools environment, not the lab runtime.
+pip-audit==2.10.1
