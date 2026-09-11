@@ -19,7 +19,7 @@ Environment: Windows, Python 3.11.9. Core dependency: PyYAML 6.0.3; MCP SDK: 1.3
 | MCP protocol tests | 4 tests launch a real stdio server and use the SDK client; discovery, structured replies, denial, pending approval, malformed arguments, cumulative budget and startup failure |
 | Decision contracts | Both original Azure and new agent examples validated against JSON Schema, including date formats |
 | Original upstream check | Released core 4.1.0 passed 1 allow, 3 denials and 1 handler execution on Windows; superseded because the dependency audit found vulnerable cryptography |
-| Current upstream source | Pinned development snapshot 5.0.0 with cryptography 50.0.1; Windows installation failed at native ACS build metadata. The separate Linux CI job is the execution gate |
+| Current upstream source | Ubuntu CI with Python 3.11 built the pinned development snapshot 5.0.0 with cryptography 50.0.1; 1 allow, 3 denials, exactly 1 handler execution; dependency check and advisory scan passed. Windows source installation failed at native ACS build metadata |
 | Source provenance | 5 dependency-independent tests check required package/cryptography versions, archive/VCS origin and wrong/missing source metadata |
 | CLI setup commands | Codex and Gemini MCP registration syntax checked against official documentation and installed help |
 
@@ -31,6 +31,8 @@ The [validation workflow](../.github/workflows/repository-validation.yml) runs 3
 
 CI configuration is executable; use the run result for the commit being reviewed as evidence. Do not interpret a workflow file alone as a passed cross-platform test.
 
+Observed publication gate: [run 34596282308](https://github.com/shibinantony/agt-architecture-lab/actions/runs/34596282308) passed all three jobs for commit `07ca7935d3e257aabc50386f54ec298cea73957d` on 2026-09-11. Windows and Ubuntu each passed all 30 tests and the demo. The separate Ubuntu job successfully built the pinned AGT source, checked its provenance, ran the four synthetic requests, passed `pip check`, and reported no known vulnerabilities with the strict isolated scanner. This validates the supplied AgentMesh wrapper cases, not native ACS execution or a provider-backed session.
+
 ## Publication review
 
 The canonical repository is [shibinantony/agt-architecture-lab](https://github.com/shibinantony/agt-architecture-lab). The rename is reflected in repository links, clone instructions, the local Git remote and the decision schema identifier. Original code and documentation use the [MIT License](../LICENSE.md), with direct dependency attribution in [third-party notices](../THIRD-PARTY-NOTICES.md).
@@ -39,7 +41,7 @@ The publication pass repeats the runtime/MCP/schema tests, actual AGT example, d
 
 Prepublication review includes all reachable Git commits, current tracked files and GitHub Actions logs/artifacts. Local environments, generated evidence, credentials/configuration and private conversation directories remain excluded from Git. Secret-pattern and dependency-advisory scans have bounded coverage and do not prove the absence of every possible vulnerability.
 
-The local lab audit on 2026-09-11 checked 33 installed packages with pip-audit 2.10.1: zero skipped packages and no known vulnerabilities after updating pip and setuptools. The released upstream installation exposed cryptography advisories; it is no longer the documented installation path. The pinned-source choice and its native build requirement are explained in the [upstream example](../examples/upstream-agt/README.md).
+The local lab audit on 2026-09-11 checked 33 installed packages with pip-audit 2.10.1: zero skipped packages and no known vulnerabilities after updating pip and setuptools. The current upstream environment also passed its strict CI advisory scan, and GitHub reported zero open dependency alerts at this review. An installed-package scan checks package names/versions, not the source commit's code. The released upstream installation exposed cryptography advisories; it is no longer the documented installation path. The pinned-source choice and its native build requirement are explained in the [upstream example](../examples/upstream-agt/README.md).
 
 ## What has not been established
 
