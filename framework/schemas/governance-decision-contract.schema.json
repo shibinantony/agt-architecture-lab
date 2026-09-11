@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/governance-evidence-lab/schemas/governance-decision-contract.schema.json",
+  "$id": "https://raw.githubusercontent.com/shibinantony/agt-architecture-lab/main/framework/schemas/governance-decision-contract.schema.json",
   "title": "Governance Decision Contract",
   "description": "A technology-to-evidence contract for a bounded cloud-governance decision.",
   "type": "object",

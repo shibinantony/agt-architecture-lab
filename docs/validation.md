@@ -25,9 +25,17 @@ The MCP tests required normal permission to create Windows subprocess pipes. Tha
 
 ## CI
 
-The [validation workflow](../.github/workflows/repository-validation.yml) runs runtime/MCP/schema tests and the demo on Windows and Ubuntu, checks repository links/JSON/encoding, and uploads synthetic demo evidence for seven days. A separate Ubuntu job installs and exercises actual AGT 4.1.0. Workflow results are available under [GitHub Actions](https://github.com/shibinantony/governance-evidence-lab/actions).
+The [validation workflow](../.github/workflows/repository-validation.yml) runs runtime/MCP/schema tests and the demo on Windows and Ubuntu, checks repository links/JSON/encoding, and uploads synthetic demo evidence for seven days. A separate Ubuntu job installs and exercises actual AGT 4.1.0. Workflow results are available under [GitHub Actions](https://github.com/shibinantony/agt-architecture-lab/actions).
 
 CI configuration is executable; use the run result for the commit being reviewed as evidence. Do not interpret a workflow file alone as a passed cross-platform test.
+
+## Publication review
+
+The canonical repository is [shibinantony/agt-architecture-lab](https://github.com/shibinantony/agt-architecture-lab). The rename is reflected in repository links, clone instructions, the local Git remote and the decision schema identifier. Original code and documentation use the [MIT License](../LICENSE.md), with direct dependency attribution in [third-party notices](../THIRD-PARTY-NOTICES.md).
+
+The publication pass repeats the runtime/MCP/schema tests, actual AGT example, dependency compatibility checks and documentation checks. `tests/check_links.py` checks local paths, heading fragments and contract references; `--external` separately checks HTTP reachability. A reachable link does not validate the linked claim.
+
+Prepublication review includes all reachable Git commits, current tracked files and GitHub Actions logs/artifacts. Local environments, generated evidence, credentials/configuration and private conversation directories remain excluded from Git. Secret-pattern and dependency-advisory scans have bounded coverage and do not prove the absence of every possible vulnerability.
 
 ## What has not been established
 
@@ -45,6 +53,7 @@ The [architecture](architecture.md) and [roadmap](../ROADMAP.md) describe those 
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 .\.venv\Scripts\python.exe -m lab demo
+.\.venv\Scripts\python.exe tests/check_links.py
 ./tests/Test-Repository.ps1
 ```
 

@@ -1,9 +1,21 @@
-# Copyright and license status
+MIT License
 
-Copyright (c) 2026 Shibin Antony. All rights reserved.
+Copyright (c) 2026 Shibin Antony
 
-This initial learning prototype is published for viewing and evaluation. No permission is granted to copy, modify, distribute, sublicense, or sell the repository's original content or code except where applicable law permits or the copyright owner gives written permission.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Third-party names, documentation, services, specifications, and linked materials remain subject to their respective ownership and license terms.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-An intentional license for code, machine-readable schemas, documentation, and templates will be selected before external contributions or a reusable public release are accepted. A possible future model is Apache-2.0 for code and CC BY 4.0 for authored documentation, but that is not the current license.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

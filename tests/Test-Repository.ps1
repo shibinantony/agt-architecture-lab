@@ -13,6 +13,7 @@ $requiredFiles = @(
     'ROADMAP.md',
     'NOTICE.md',
     'LICENSE.md',
+    'THIRD-PARTY-NOTICES.md',
     'docs/source-register.md',
     'framework/prove-method.md',
     'framework/schemas/governance-decision-contract.schema.json',

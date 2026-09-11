@@ -4,6 +4,12 @@ All notable project changes will be recorded here.
 
 ## Unreleased
 
+### Publication preparation — 2026-09-11
+
+- Renamed the GitHub repository to `agt-architecture-lab` and updated its remote, canonical links, clone instructions and schema identifier.
+- Applied the MIT License to original code and documentation with the owner's explicit approval; added dependency attribution and updated contribution terms.
+- Repeated runtime, MCP, upstream AGT, document, dependency and publication-safety QA before the public launch.
+
 ### Reworked — 2026-09-11
 
 - Retitled the project around Microsoft Agent Governance Toolkit (AGT), with explicit upstream attribution and role-based learning.
@@ -12,7 +18,7 @@ All notable project changes will be recorded here.
 - Added a separate pinned Microsoft AGT 4.1.0 example, executed with allow/deny assertions.
 - Rebuilt architecture, FinOps, executive/operating guides, controls and maturity around agent governance.
 - Added an agent decision contract, real schema validation and Windows/Ubuntu CI with an upstream AGT job.
-- Preserved the existing repository URL, private status, original license and ignored conversation records.
+- Kept the repository private during the initial rework; private conversation records remained excluded.
 
 ## Initial foundation — 2026-09-09
 
@@ -28,5 +34,5 @@ All notable project changes will be recorded here.
 ### Limitations
 
 - No Azure deployment or tenant query has been validated.
-- No open-source or open-content license has been selected.
-- Initial project title was Governance Evidence Lab.
+- The initial draft reserved reuse rights; superseded by the MIT publication decision above.
+- Initial project scope focused on Azure resource governance evidence.

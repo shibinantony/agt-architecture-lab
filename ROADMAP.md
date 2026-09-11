@@ -35,6 +35,6 @@ Add authenticated identity, protected policy/evidence, shared durable metering, 
 
 ## Later: scale and reuse
 
-Integrate broader Azure controls, financial exports and enterprise evidence systems only after the pilot establishes need. Select intentional code/documentation licenses before changing reuse or contribution rights; current [license terms](LICENSE.md) remain in force.
+Integrate broader Azure controls, financial exports and enterprise evidence systems only after the pilot establishes need. Original code and documentation use the [MIT License](LICENSE.md); preserve attribution and review third-party terms when adding dependencies or adapted material.
 
 Maturity labels are scoped: source-reviewed, fixture-tested, protocol-tested, upstream-example-tested, sandbox-observed and pilot-observed. None alone means production-ready.

@@ -4,6 +4,8 @@ Learn how an AI agent's proposed action becomes an enforced decision, a bounded 
 
 This is an independent companion to **Microsoft's [Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit)**. AGT means **Agent Governance Toolkit**, not Azure Governance Toolkit. Azure Policy, identity, landing zones, and Cost Management provide complementary platform controls. [Attribution](NOTICE.md).
 
+Repository: [shibinantony/agt-architecture-lab](https://github.com/shibinantony/agt-architecture-lab).
+
 **Start here:** [Run the lab](docs/lab-guide.md) · [Choose your path](docs/learning-path.md) · [Architecture review](docs/architecture.md) · [CXO brief](EXECUTIVE-BRIEF.md)
 
 ## What you can run
@@ -25,7 +27,14 @@ MCP integration does not govern a client's other tools, shell, files, model traf
 
 ## Run it in five minutes
 
-Prerequisite: Python 3.11 or later. From the repository root on Windows:
+Prerequisites: Git and Python 3.11 or later. Clone the repository:
+
+```shell
+git clone https://github.com/shibinantony/agt-architecture-lab.git
+cd agt-architecture-lab
+```
+
+From the repository root on Windows:
 
 ```powershell
 py -3 -m venv .venv
@@ -97,8 +106,10 @@ The lab's monetary values are synthetic. They are neither vendor prices nor real
 
 ## Validation and maturity
 
-Install `requirements-dev.txt`, then run `python -m unittest discover -s tests -v` and `./tests/Test-Repository.ps1`. The [workflow](.github/workflows/repository-validation.yml) runs checks and the offline demo. The [validation record](docs/validation.md) separates local observations from untested live integrations.
+Install `requirements-dev.txt`, then run `python -m unittest discover -s tests -v`, `python tests/check_links.py` and `./tests/Test-Repository.ps1`. The [workflow](.github/workflows/repository-validation.yml) runs checks and the offline demo. The [validation record](docs/validation.md) separates local observations from untested live integrations.
 
-The repository began as *Governance Evidence Lab*. Its URL remains stable for existing links. Production isolation, distributed metering, authenticated approvals, cloud deployment and provider validation remain [explicit next gates](ROADMAP.md).
+The canonical repository name is `agt-architecture-lab`. Production isolation, distributed metering, authenticated approvals, cloud deployment and provider validation remain [explicit next gates](ROADMAP.md).
 
-Original content retains the existing [license terms](LICENSE.md); upstream projects have their own licenses. [Sources](docs/source-register.md) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md).
+Original code, documentation, schemas, templates and examples are licensed under the [MIT License](LICENSE.md), copyright 2026 Shibin Antony. You may use, adapt and redistribute them, including commercially, while preserving the license and copyright notice. Dependencies and linked vendor material retain their own terms; see [third-party notices](THIRD-PARTY-NOTICES.md).
+
+[Sources](docs/source-register.md) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md).

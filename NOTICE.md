@@ -8,4 +8,6 @@ Microsoft, Azure, Agent Governance Toolkit, AGT, OpenAI, Codex, Google, and Gemi
 
 The Python policy emulator, its YAML format, PROVE method and decision contracts are this lab's educational implementation. They do not implement the full Agent Control Specification and are not interchangeable with AGT policies. MCP supplies the client connection; this does not imply a native AGT adapter for every named client. Any separate upstream example identifies its actual dependency and version.
 
-Only original analysis, public references and synthetic examples belong in this repository. Keep credentials, real tenant/billing/identity data, confidential architecture, employer or client material, and private conversation records out of commits. Linked materials retain upstream licenses; original lab material retains [its existing license](LICENSE.md).
+Original code, documentation, schemas, templates and examples in this repository are released under the [MIT License](LICENSE.md), copyright 2026 Shibin Antony. The license does not relicense third-party dependencies, linked documentation, trademarks or other vendor assets. See [third-party notices](THIRD-PARTY-NOTICES.md) for the dependency and attribution boundary.
+
+Only original analysis, public references and synthetic examples belong in this repository. Keep credentials, real tenant/billing/identity data, confidential architecture, employer or client material, and private conversation records out of commits.
