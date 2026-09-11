@@ -1,21 +1,23 @@
-# Security policy
+# Security and trust boundaries
 
-## Current support boundary
+This repository contains educational code, an original policy emulator, a local MCP server, and a separate pinned upstream AGT example. It has no supported production deployment.
 
-This repository is a learning prototype. It has no supported production release and should not be used as an authority to deploy controls into an Azure environment.
+## What the runnable lab protects
 
-## Reporting a security concern
+The emulator evaluates requests reaching its five-tool host. It rejects unsupported arguments and policy keys, limits fixture access, blocks denied/pending actions, applies a synthetic session allowance, and requires decision evidence before dispatch. See [tests](tests/) and [implementation](docs/technical-implementation.md).
 
-Do not open a public issue containing a secret, real tenant identifier, exploitable configuration, client information, or other sensitive data. When the repository is published, the owner must configure a private vulnerability-reporting channel before accepting security reports.
+Its configuration, process, fixture and filesystem are trusted. Local actor values are not authenticated identities. Budget state resets with a new runtime; evidence is editable. A coding client's shell, other MCP servers, direct credentials and model traffic are outside this boundary. Repeated denied requests can still consume memory, disk and client tokens; production ingress needs rate/size limits.
 
-Until that channel exists, remove sensitive details and contact the repository owner through a private, previously verified route.
+The upstream example validates only the installed AGT wrapper and supplied synthetic cases. It does not test the full toolkit's identity, isolation, approval, ACS or fleet capabilities. [Upstream example scope](examples/upstream-agt/README.md).
 
-## Repository safety rules
+## Handling data and credentials
 
-- Never commit credentials, tokens, certificates, private keys, connection strings, or real environment exports.
-- Treat inventory, role assignments, policy assignments, cost data, and architecture output as potentially sensitive.
-- Run future Azure collectors with the minimum read permission required.
-- Use a separate, narrowly scoped identity for any future deployment or remediation.
-- Require explicit review for commands capable of creating, changing, or deleting Azure resources.
-- Default examples to synthetic data and non-destructive behavior.
-- Record destructive semantics, including deployment-stack or desired-state cleanup behavior, before enabling them.
+Use synthetic inputs. Do not commit provider keys, tokens, connection strings, real inventory, invoices, identity details, client/employer data or private conversation records. Generated sessions and local CLI settings are ignored by Git, but ignored files still need suitable local access controls.
+
+The default demo and tests need no provider account or Azure access. Optional client sessions use the client's existing authentication and can incur provider usage. A real deployment needs independently protected credentials, policy, evidence and a reviewed operating model.
+
+## Reporting
+
+Do not disclose secrets or sensitive exploit/environment details in public issues. Use a previously verified private contact route to the repository owner. Do not assume GitHub private vulnerability reporting has been configured; verify availability before submitting details.
+
+For upstream component vulnerabilities, follow the affected upstream project's security policy. Report the exact version and distinguish a lab defect from an upstream issue.

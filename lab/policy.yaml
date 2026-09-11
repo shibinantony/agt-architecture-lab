@@ -1,0 +1,33 @@
+# ORIGINAL teaching schema. This is NOT an AGT or Agent Control Specification file.
+# Costs are synthetic USD for one runtime session, not Azure or model prices.
+schema_version: agt-architecture-lab/v1
+metadata:
+  name: Sandbox engineering review
+actor:
+  id: learner-001
+  role: engineer
+environment:
+  name: sandbox
+controls:
+  default_decision: deny
+  allowed_environments: [sandbox]
+  allowed_roles: [engineer, architect]
+  allowed_resource_groups: [rg-agt-lab]
+  allowed_classifications: [public, internal]
+  max_session_cost_usd: 0.05
+tools:
+  inventory_resources:
+    decision: allow
+    cost_usd: 0.01
+  estimate_cost:
+    decision: allow
+    cost_usd: 0.02
+  create_governance_report:
+    decision: allow
+    cost_usd: 0.02
+  request_deployment:
+    decision: require_approval
+    cost_usd: 0
+  delete_resource:
+    decision: deny
+    cost_usd: 0

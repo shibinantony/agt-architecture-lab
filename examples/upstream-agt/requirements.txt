@@ -1,0 +1,2 @@
+# Released upstream API; do not combine with current main's ACS examples.
+agent-governance-toolkit-core==4.1.0

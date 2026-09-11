@@ -17,6 +17,15 @@ $requiredFiles = @(
     'framework/prove-method.md',
     'framework/schemas/governance-decision-contract.schema.json',
     'framework/templates/governance-decision-contract.example.json'
+    'framework/templates/agent-governance-decision.example.json'
+    'lab/policy.yaml'
+    'lab/runtime.py'
+    'integrations/mcp_server.py'
+    'docs/lab-guide.md'
+    'docs/cli-integration.md'
+    'docs/agt-reference.md'
+    'docs/validation.md'
+    'examples/upstream-agt/run.py'
 )
 
 foreach ($relativePath in $requiredFiles) {
@@ -26,13 +35,30 @@ foreach ($relativePath in $requiredFiles) {
     }
 }
 
-$files = Get-ChildItem -LiteralPath $root -Recurse -File | Where-Object {
-    $_.FullName -notmatch '[\\/](\.git|\.local-conversation|\.conversations|\.chat-history|\.codex|\.agents)[\\/]'
+$excludedDirectories = @(
+    '.git', '.local-conversation', '.conversations', '.chat-history',
+    '.codex', '.agents', '.gemini', '.venv', '.venv-agt', '__pycache__',
+    '.pytest_cache', 'node_modules', 'artifacts', 'out', 'reports', 'evidence'
+)
+
+function Get-ProjectFiles([string]$Directory) {
+    foreach ($item in Get-ChildItem -LiteralPath $Directory -Force) {
+        if ($item.PSIsContainer) {
+            if ($item.Name -notin $excludedDirectories -and
+                -not ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                Get-ProjectFiles $item.FullName
+            }
+        }
+        else {
+            $item
+        }
+    }
 }
+$files = @(Get-ProjectFiles $root)
 
 foreach ($jsonFile in $files | Where-Object Extension -eq '.json') {
     try {
-        $null = Get-Content -LiteralPath $jsonFile.FullName -Raw | ConvertFrom-Json
+        $null = Get-Content -LiteralPath $jsonFile.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
     }
     catch {
         $relativePath = $jsonFile.FullName.Substring($root.Length).TrimStart('\', '/')
@@ -42,7 +68,7 @@ foreach ($jsonFile in $files | Where-Object Extension -eq '.json') {
 
 $linkPattern = [regex]'\[[^\]]+\]\((?<target>[^)]+)\)'
 foreach ($markdownFile in $files | Where-Object Extension -eq '.md') {
-    $content = Get-Content -LiteralPath $markdownFile.FullName -Raw
+    $content = Get-Content -LiteralPath $markdownFile.FullName -Raw -Encoding UTF8
     $relativeMarkdownPath = $markdownFile.FullName.Substring($root.Length).TrimStart('\', '/')
 
     if ($content.Contains([char]0xFFFD)) {
@@ -74,7 +100,7 @@ foreach ($markdownFile in $files | Where-Object Extension -eq '.md') {
 
 if ($errors.Count -gt 0) {
     foreach ($validationError in $errors) {
-        Write-Error $validationError
+        Write-Error $validationError -ErrorAction Continue
     }
     exit 1
 }

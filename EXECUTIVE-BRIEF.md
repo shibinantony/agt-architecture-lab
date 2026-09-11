@@ -1,204 +1,72 @@
 ---
 status: learning-prototype
-tested_scope: documentation-and-local-contract-fixture
-last_verified: 2026-09-09
+tested_scope: executive-decision-design
+last_verified: 2026-09-11
 owner: Shibin Antony
 ---
 
-# Executive brief: Governance Evidence Lab
+# Executive brief: Microsoft Agent Governance Toolkit (AGT) — Architecture Review & Hands-on Lab
 
-## Decision requested
+This is an independent companion to Microsoft's [Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit), the upstream project for governing AI agent actions. Azure is the example enterprise environment. The repository provides an original teaching emulator, a separate [working example of released AGT 4.1.0](examples/upstream-agt/README.md), and an adoption framework. The two executable examples have distinct implementations and tested scopes.
 
-Approve a documentation-first, read-only v0.1 learning milestone that tests whether a common decision-and-evidence model can make Azure governance safer, more explainable, and more economically accountable. Do not approve production enforcement at this stage.
+## The business decision
 
-## Executive summary
+Choose whether one bounded agent workflow merits a measured pilot. A useful first candidate is an assistant that reviews an Azure inventory, estimates cost, and drafts a governance report. Give it explicit permission to inspect approved data, prevent destructive operations, and route sensitive actions to a human decision.
 
-Cloud governance fails when it is treated either as a policy document that engineers cannot execute or as a technical control that leadership cannot connect to business risk. Governance Evidence Lab is an independent learning project and emerging reference implementation designed to close that gap.
+The funding question is: **can a controlled agent produce an accepted business result with less effort and acceptable risk, total cost, and operating burden?** Installing a toolkit does not answer that question.
 
-The Lab translates an approved business risk or outcome into a Governance Decision Contract: control objective, Azure scope, mechanism, owner, evidence, test, exception, economic metric, rollout, and rollback. It uses existing Microsoft Azure capabilities rather than creating a new control plane.
-
-The smallest viable first step is a zero-write baseline using synthetic data and, optionally, read-only access to one sandbox subscription. The next decision should be based on evidence quality, control usefulness, workload-team friction, operating cost, and ownership—not on the number of policies deployed.
-
-## What it is for
-
-- Make governance decisions repeatable and reviewable.
-- Link business risk to implementation and operating evidence.
-- Reduce unsafe tenant-wide changes through progressive exposure.
-- Give exceptions an owner, justification, scope, compensating control, and expiry.
-- Connect cloud governance with FinOps and delivery experience.
-- Turn each implementation lesson into a public, reusable learning asset.
-
-## What it is not
-
-- A Microsoft product or Microsoft's Agent Governance Toolkit.
-- A substitute for Azure Landing Zones, the Cloud Adoption Framework, or local architecture authority.
-- A compliance certification, audit opinion, security guarantee, or legal interpretation.
-- A production-ready policy pack.
-- A promise that more controls automatically create more value.
-
-## Intended users
-
-| Stakeholder | Decision or outcome supported |
-|---|---|
-| CIO / CTO | Governance investment, platform model, delivery speed, and scale gate |
-| CISO / risk leadership | Risk ownership, control coverage, evidence, and exception posture |
-| CFO / FinOps leadership | Allocation, operating cost, realized value, and investment discipline |
-| Cloud CoE / platform leadership | Paved-road design, policy lifecycle, subscription onboarding, and service levels |
-| Architects and engineers | Scope, mechanism, tests, deployment sequence, rollback, and troubleshooting |
-| Workload owners | Clear obligations, impact review, remediation, and exception route |
-| Assurance / audit | Reconstructable decisions and evidence limitations |
-
-## Value thesis
-
-The Lab can create value if it measurably improves one or more of the following:
-
-- Faster governed onboarding for subscriptions and workloads.
-- Less repeated control design and evidence preparation.
-- Fewer high-impact configuration failures or late remediations.
-- Better cost allocation and earlier response to abnormal spending.
-- Fewer permanent or unexplained policy exemptions.
-- Lower privileged-access exposure.
-- Better decision quality about which controls to scale, change, or retire.
-
-These are hypotheses until baselines and pilots produce observed results.
-
-## Advantages
-
-- Reuses Azure-native capabilities and public Microsoft guidance.
-- Creates one trace from executive intent to technical evidence.
-- Starts read-only and moves toward enforcement through measured gates.
-- Treats workload-team friction and exception demand as product signals.
-- Separates assumptions, recommendations, and observed evidence.
-- Includes the cost of governance in the business case.
-
-## Disadvantages and trade-offs
-
-- Requires a cross-functional operating model; code alone is insufficient.
-- Poor policy design can block delivery, create false positives, or cause broad impact.
-- Evidence collection, log retention, dashboards, paid security features, and remediation cost money.
-- Azure services, policy definitions, APIs, previews, and retirements require maintenance.
-- Read-only inventory may be incomplete because of access boundaries or data latency.
-- Central standards can become a bottleneck unless subscription vending, support, and exceptions are fast.
-- Automated compliance signals do not establish regulatory compliance.
-
-## Recommended operating model
-
-Use a small governance product team with an executive sponsor and federated execution:
-
-| Role | Primary accountability |
-|---|---|
-| Executive sponsor | Mandate, risk appetite, funding, and unresolved conflict |
-| Governance product owner | Outcomes, roadmap, service levels, and stakeholder experience |
-| Cloud platform owner | Hierarchy, shared platform, deployment identities, and technical operation |
-| Security / IAM owner | Security baseline, privileged access, and high-risk exception review |
-| FinOps owner | Allocation, budgets, optimization evidence, and realized-value reporting |
-| Control owner | Purpose, applicability, test, remediation expectation, and periodic review |
-| Workload owner | Local implementation, evidence, remediation, and accepted residual risk |
-| Assurance | Independent test design and challenge of evidence claims |
-
-Detailed decision rights appear in the [operating model](docs/operating-model.md).
-
-## FinOps and commercial implications
-
-### Cost of governance
-
-Budget for the full lifecycle, not just policy authoring:
-
-- Architecture, engineering, testing, and platform ownership.
-- Pipeline and automation operation.
-- Azure Monitor ingestion, retention, archive, and query usage.
-- Optional Defender for Cloud, PIM, reporting, and FinOps components.
-- Exception triage, remediation, support, training, and periodic review.
-- Workload-team waiting time, failed deployments, and rework caused by controls.
-
-### Value of governance
-
-Track realized outcomes separately:
-
-- Verified cash savings.
-- Cost avoidance.
-- Capacity released and its actual redeployment.
-- Revenue or delivery acceleration.
-- Risk reduction, without presenting maximum exposure as a saving.
-
-```text
-Net realized value
-  = verified gross financial benefit
-  - implementation cost
-  - ongoing operating cost
-  - quantified delivery friction
-```
-
-Do not count an Azure Advisor recommendation as savings until an approved action is implemented and the benefit is observed.
-
-## 30 / 60 / 90-day learning adoption plan
-
-### Days 0–30: profile and resolve
-
-- Confirm naming, scope, license intent, and non-affiliation notice.
-- Name the executive sponsor and governance product owner.
-- Select one sandbox subscription or a synthetic estate.
-- Baseline ownership, hierarchy, policy, RBAC, resources, cost visibility, and current exceptions.
-- Agree success, stop, data-handling, and publication rules.
-
-**Gate:** proceed only if scope, owner, permissions, and confidential-data handling are explicit.
-
-### Days 31–60: operationalize and verify in audit mode
-
-- Select a small control set based on real risks.
-- Map each control to a built-in or current Azure mechanism before considering custom code.
-- Validate queries and evidence completeness.
-- Test an audit-only policy change in a sandbox with representative workloads.
-- Measure false positives, remediation effort, workload friction, and operating cost.
-
-**Gate:** no enforcement until tests, exemptions, rollback, and ownership are credible.
-
-### Days 61–90: limited canary and decision
-
-- Introduce one narrow, reversible canary only with separate change authorization.
-- Monitor application health, policy effect, support demand, exception volume, and cost.
-- Reconcile expected and observed evidence.
-- Decide to scale, revise, hold, or stop each control independently.
-
-**Gate:** scale only when control effectiveness and operational readiness exceed the measured cost and friction.
-
-## Executive scorecard
-
-| Dimension | Question | Example v0.1 evidence |
+| Choice | When it fits | Evidence to require |
 |---|---|---|
-| Value | Which business or risk outcome changed? | Baseline and observed outcome; no unsupported ROI |
-| Feasibility | Can the control be operated with current platform, access, and skills? | Query coverage, deployment test, support model |
-| Risk | What harm can the control prevent or itself cause? | Test cases, blast-radius analysis, rollback |
-| Adoption | Will platform and workload teams use the paved road? | Onboarding time, feedback, exception demand |
-| Economics | Does benefit justify lifecycle cost and friction? | Cost ledger and realized-value classification |
-| Evidence | Can an independent reviewer reconstruct the decision and result? | Versioned contract, assignment, result, and timestamp |
+| Run a bounded pilot | A repeatable workflow has a business owner, an approved dataset, and a measurable baseline | Accepted-result rate, full operating cost, control coverage, exception demand, and rollback exercise |
+| Continue offline learning | The team needs to understand tool boundaries, YAML policies, or evidence before selecting a workload | Completed [role exercises](docs/learning-path.md) and a reviewed architecture |
+| Defer this use case | Risk exceeds delegated authority, benefits are weak, or ownership is absent | Recorded reason, cheaper alternatives, and a specific reconsideration trigger |
 
-## Scale, stop, and reversal rules
+## What the demonstration makes concrete
 
-Scale a control only when:
+Run the [hands-on lab](docs/lab-guide.md) or have an engineer present its evidence. A YAML policy evaluates tool requests before execution. The demo exercises allowed work, denied work, a request requiring approval, and a synthetic tool-budget limit, then writes audit and summary artifacts.
 
-- the risk and accountable owner remain valid;
-- representative tests pass;
-- inventory coverage is understood;
-- false positives and workload impact are within approved thresholds;
-- exceptions are bounded and operable;
-- telemetry, incident response, and rollback work;
-- lifecycle cost is accepted; and
-- no higher-value, lower-friction alternative exists.
+That lets leadership examine a decision trail: requested action, applicable policy, decision, outcome, and budget effect. The default run uses fixtures and makes no cloud or model calls. Its results demonstrate local policy behavior; they do not measure production incident reduction, provider spending, or ROI.
 
-Stop or reverse when:
+The separate released-AGT example was verified on Windows with Python 3.11.9: one permitted request executed and three denied requests did not reach the handler. That establishes the tested wrapper's behavior for four synthetic requests, not production readiness, native ACS execution, or an end-to-end model-provider integration.
 
-- the control causes material workload harm;
-- evidence is incomplete or misleading;
-- remediation permissions exceed approved scope;
-- exception volume shows that the control is badly targeted;
-- the owning team cannot operate or support it; or
-- the expected outcome no longer justifies the cost.
+The optional MCP route lets a configured Codex or Gemini CLI client request these guarded tools. Its boundary is those tools. Other shell commands, connections, credentials, and model requests require their own controls. See the [architecture](docs/architecture.md) for the full integration and bypass paths.
 
-## Principal challenges
+## What changes in the enterprise architecture
 
-The largest risks are naming confusion, brownfield disruption, broad policy blast radius, inherited-policy complexity, excessive privilege for remediation, incomplete inventory, cost-data latency, uncontrolled log costs, permanent exceptions, compliance overclaim, and governance becoming a one-time project. The mitigation register is maintained in [Challenges and trade-offs](docs/challenges-and-tradeoffs.md).
+Place agent governance between the agent's proposed action and the business tool that can carry it out. Combine it with identity and access controls, network restrictions, a model gateway, content safeguards, approval services, and durable evidence storage. Azure Policy governs supported Azure resource properties and actions; agent policy evaluates actions at integrated agent/tool boundaries, including non-Azure tools. Each has a distinct owner and scope. [Azure Policy overview](https://learn.microsoft.com/en-us/azure/governance/policy/overview).
 
-## Recommendation
+The [upstream AGT repository](https://github.com/microsoft/agent-governance-toolkit) is the source for its actual implementation and supported integrations. Use this lab to understand the design questions, then validate a selected upstream version against the intended workload.
 
-Proceed with v0.1 as a public learning prototype and read-only decision pack. Keep Azure writes, enforcement, real tenant data, client material, and production claims out of the first milestone. Require a separate decision before any audit policy is assigned in an Azure environment.
+## Benefits to measure
+
+| Value hypothesis | Pilot measure | What would weaken the case |
+|---|---|---|
+| Less repetitive review work | Median human minutes per accepted report, including corrections | Review and approval time exceeds the baseline |
+| More consistent control decisions | Positive, negative, and bypass test outcomes for the selected tools | Work can reach the target through an unguarded route |
+| Faster evidence preparation | Time for an independent reviewer to reconstruct a sampled action | Logs lack policy identity, result, scope, or retention |
+| Better spending discipline | Total cost per accepted task, retry rate, and reconciled budget variance | Tool limits hide growing model, infrastructure, or support costs |
+| Safer expansion of agent access | Number and severity of uncovered action paths and unresolved exceptions | Permissions grow faster than coverage and operating capacity |
+
+These are hypotheses. A blocked synthetic action is an observed local decision, not a prevented production incident. An estimated Azure saving is a recommendation until an approved change produces a verified financial outcome.
+
+## Accountability and investment
+
+Name a business owner for the outcome and residual risk, a platform owner for the tool boundary and availability, a security owner for identity and abuse controls, and a FinOps owner for allocation and reconciliation. The governance product owner coordinates policy changes, support, training, and adoption; assurance independently challenges the evidence. The [operating model](docs/operating-model.md) defines decision rights.
+
+Fund the complete service: engineering, model consumption, gateway and compute, logs and retention, human approval, support, incident response, and maintenance. Model fees can continue even when a tool is denied. The [FinOps guide](docs/finops.md) separates these costs and provides a worked, fictional example.
+
+## A 30 / 60 / 90-day pilot plan
+
+| Period | Director's deliverable | Gate for the next stage |
+|---|---|---|
+| Days 0–30 | Select one workflow; baseline time, cost, quality, and failure modes; complete the local lab; name owners and budgets | Scope, data handling, expected benefit, and acceptance criteria are explicit |
+| Days 31–60 | Validate the selected upstream version in a controlled environment; test allowed and denied actions, approval expiry, bypasses, unavailable dependencies, and budget exhaustion | Representative evidence supports the tool boundary, support process, and rollback |
+| Days 61–90 | Operate a limited pilot; sample decisions; reconcile usage; measure accepted outcomes, friction, incidents, and exceptions | Decide scale, revise, hold, or stop using the agreed baseline |
+
+Pilot targets are proposals until owners agree them. A lab completion is not authorization for cloud access or production enforcement.
+
+## The scale decision pack
+
+Request one [Governance Decision Contract](framework/templates/agent-governance-decision.example.json), an [architecture review](docs/architecture.md), a cost-and-value ledger, representative test evidence, and an operating owner. Apply the original [PROVE method](framework/prove-method.md): Profile the outcome, Resolve authority, Operationalize the control, Verify evidence, and Evolve from results.
+
+Scale only when the accepted outcome improves, coverage and limitations are understood, financial evidence reconciles, and the team can support and reverse the service. Hold or stop when false denials, approval queues, missing evidence, bypasses, or total cost undermine the case. This lab makes those choices reviewable; it does not make them on behalf of the organization.

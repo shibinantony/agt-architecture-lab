@@ -50,12 +50,12 @@
     "sources": [
       {
         "type": "primary-documentation",
-        "reference": "docs/source-register.md#cost-data",
+        "reference": "docs/source-register.md",
         "status": "available"
       },
       {
         "type": "local-fixture",
-        "reference": "Synthetic fixture planned for roadmap phase 1",
+        "reference": "A Resource Graph query equivalence fixture remains future work; lab/fixtures/resources.json belongs to the separate agent lab.",
         "status": "planned"
       }
     ],
@@ -137,7 +137,7 @@
     "The query can be executed with Reader at the intended sandbox scope."
   ],
   "known_limits": [
-    "No synthetic estate fixture exists yet.",
+    "No fixture equivalence test for this legacy Resource Graph query exists yet.",
     "No Azure tenant behavior has been observed.",
     "The example does not authorize a policy assignment or resource modification."
   ]

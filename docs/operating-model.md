@@ -1,143 +1,92 @@
 ---
 status: learning-prototype
 tested_scope: operating-model-design
-last_verified: 2026-09-09
+last_verified: 2026-09-11
 ---
 
-# Governance operating model
+# Operating an agent governance service
 
-## Product mindset
+An agent governance service owns the path from a proposed action to an authorized tool execution and usable evidence. This is the lab's proposed operating model for evaluating [Microsoft Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit) in an organization. The local emulator demonstrates selected decisions; the production roles and workflows below must be designed and validated for the actual service.
 
-Cloud governance is a continuous service to the organization, not a one-time policy deployment. Its customers are the people who fund, assure, build, operate, and consume cloud platforms. A strong governance service reduces meaningful risk while making the compliant path understandable and efficient.
+## Ownership and decision rights
 
-## Core roles
-
-| Role | Accountable for | Must not silently delegate |
+| Role | Accountable for | Decision it retains |
 |---|---|---|
-| Executive sponsor | Mandate, risk appetite, funding, escalation | Acceptance of unresolved enterprise conflict |
-| Governance product owner | Outcomes, roadmap, service levels, adoption, overall performance | Product priorities and stakeholder experience |
-| Business or risk owner | Business consequence and residual-risk decision | Risk acceptance |
-| Cloud platform owner | Hierarchy, landing-zone integration, technical operation, deployment identities | Platform availability and change safety |
-| Security and IAM owner | Security baseline, privileged access, security exceptions | High-impact identity and security decisions |
-| FinOps owner | Allocation, budget process, optimization governance, realized-value model | Financial interpretation |
-| Control owner | Purpose, applicability, test, evidence, remediation expectation, review | Continued need and design effectiveness |
-| Control operator | Day-to-day deployment, monitoring, and response | Escalation of failure or ambiguity |
-| Workload owner | Workload implementation, impact evidence, remediation, local operation | Business impact and local residual risk |
-| Exception authority | Approval of a bounded deviation within delegated authority | Exceptions outside delegated scope |
-| Assurance | Independent test, sampling, and challenge | Independence of conclusion |
+| Executive sponsor | Mandate, funding, enterprise trade-offs | Risk appetite and expansion beyond the pilot mandate |
+| Business / risk owner | Useful task outcome and business consequences | Acceptance of material residual risk |
+| Governance product owner | Policy service, roadmap, adoption, support experience | Priorities, service commitments, and control retirement |
+| Agent / workload owner | Agent instructions, tool selection, task quality, local operation | Whether results are fit for the business workflow |
+| Platform owner | Tool gateway, execution boundary, credentials, deployments, availability | Technical release, containment, and rollback |
+| Security / IAM owner | Identity, access, abuse scenarios, secret handling | Security exception decisions within delegated authority |
+| Control owner | Purpose, policy version, tests, evidence, review date | Whether a rule still meets its objective |
+| Approval authority | Bounded actions requiring human judgment | Approval of the exact action and scope, within its mandate |
+| FinOps / finance owner | Budgets, allocation, usage reconciliation, value classification | Recognition of savings and financial limits |
+| Assurance | Independent sampling and challenge | Whether available evidence supports the claim |
 
-One person may hold multiple roles in a small organization, but the decision rights should still be named.
+One person may hold several roles in a small team. Record conflicts explicitly; authors should not independently approve their own high-impact exceptions.
 
-## Responsibility matrix
+## Action handling
 
-Legend: `A` accountable, `R` responsible, `C` consulted, `I` informed.
+| Decision or event | Required operating response | Evidence |
+|---|---|---|
+| Allow | Execute only the evaluated operation with its approved arguments and identity | Policy identity, request correlation, tool result, actual usage |
+| Deny | Return a useful reason and a supported next step; avoid blind retries | Denied request, reason, rule, and absence of tool execution |
+| Require approval | Hold the operation pending a valid decision | Request digest, authority, scope, expiry, decision, and execution reference |
+| Budget exhausted | Stop admitting billable work within that enforced scope; route to the budget owner | Remaining budget, reserved amount, decision, and ledger state |
+| Policy / identity service unavailable | Follow the reviewed failure behavior for that action class | Dependency failure, observed behavior, incident owner |
+| Evidence sink unavailable | Apply the approved evidence-availability rule; queue or reject as designed | Lost/queued record count, recovery, reconciliation result |
 
-| Activity | Sponsor | Gov. product | Risk owner | Platform | Security / IAM | FinOps | Workload | Assurance |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Set governance outcomes and tolerance | A | R | R | C | C | C | C | I |
-| Design control objective | I | A | C | R | R | C | C | C |
-| Select Azure mechanism and scope | I | A | C | R | C | C | C | C |
-| Approve deployment | I | A | C | R | C | I | C | I |
-| Accept material residual risk | I | C | A | C | C | C | C | I |
-| Operate and monitor control | I | A | I | R | R | C | R | I |
-| Approve bounded exception | I | A | A | C | C | C | R | I |
-| Validate realized financial benefit | I | C | C | C | I | A/R | C | C |
-| Test control independently | I | C | I | C | C | C | C | A/R |
-| Scale, revise, or retire control | I | A/R | C | C | C | C | C | C |
+The lab's `require_approval` result is a stop for teaching, not an implemented organizational approval service. A production approval must bind the actual tool, arguments, requester, environment, and expiry. A changed request needs evaluation again; a reusable chat reply saying “approved” is insufficient authority.
 
-Tailor this matrix; do not copy it into an organization without confirming its existing accountabilities.
+## Policy lifecycle
 
-## Control lifecycle
+Use [PROVE](../framework/prove-method.md) and the [agent governance decision contract](../framework/templates/agent-governance-decision.example.json) to keep intent connected to implementation.
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Proposed
-    Proposed --> Baseline: owner and evidence question accepted
-    Baseline --> Designed: applicability and mechanism selected
-    Designed --> SandboxAudit: tests and preview approved
-    SandboxAudit --> Revised: unexpected result or friction
-    Revised --> Designed
-    SandboxAudit --> Canary: evidence gate passed
-    Canary --> Enforced: scale gate passed
-    Canary --> RolledBack: impact or evidence gate failed
-    Enforced --> Reviewed: scheduled or event-driven review
-    Reviewed --> Enforced: still effective
-    Reviewed --> Revised: design change required
-    Reviewed --> Retired: need or value ended
-    RolledBack --> Revised
-    Retired --> [*]
+flowchart LR
+    P[Profile workflow and risk] --> R[Resolve scope and owner]
+    R --> D[Version policy and tests]
+    D --> S[Validate in sandbox]
+    S --> C[Operate limited pilot]
+    C --> E[Review outcome and cost]
+    E --> X{Decision}
+    X -->|Scale| C
+    X -->|Revise| D
+    X -->|Stop or retire| T[Revoke access and reconcile evidence]
 ```
 
-Every state transition needs an owner, date, evidence, and next review or decision trigger.
+Every transition records an owner, date, evidence, and next review trigger. Validate normal work, denied operations, malformed input, exhausted budgets, approval failures, and alternative paths to the target. A policy file change can alter authority and needs the same review discipline as an application change.
 
-## Decision rights
+Keep an emergency procedure that revokes tool credentials or stops the execution service. Reverting a policy does not undo an external side effect; recovery for messages, writes, or deployments needs a workload-specific plan.
 
-### Control proposal
+## Exception workflow
 
-Anyone may propose a control. The governance product owner accepts it into analysis only when the outcome or risk, beneficiary, scope hypothesis, and accountable risk owner are identifiable.
+Use the [exception record](../framework/templates/exception-record.md) for a bounded deviation: control and version, exact agent/tool/environment scope, reason, compensating control, approver, expiry, monitoring, and closure. The template's Azure exemption reference is relevant only when an Azure Policy exemption is also involved; it does not grant agent authority.
 
-### Technical design
+The requester proposes the smallest deviation. The control, security, workload, and FinOps owners assess consequences. The delegated risk authority decides; the platform owner implements the exact approved scope. Review expiry and usage, then remove or renew with fresh evidence. A frequent exception is a signal to redesign the rule or the supported workflow.
 
-The platform owner selects the implementation with control, workload, security, and FinOps input. A custom policy is justified only when current supported mechanisms do not meet the objective.
+## Director's adoption exercise
 
-### Deployment
+1. Choose one workflow, such as producing a reviewed cloud inventory report. Write its user, accepted output, existing human process, and excluded actions.
+2. Complete a [governance charter](../framework/templates/governance-charter.md) with named role groups, budget owner, and escalation route. Record the agent/tool boundary as well as the Azure resource scope.
+3. Use the [learning path](learning-path.md) to pair an engineer with an architect. Ask them to present one allowed decision, one denied decision, one approval boundary, and one bypass risk.
+4. Baseline task completion time, accepted-result rate, human review minutes, and total cost. Set proposed pilot thresholds before reviewing pilot outcomes.
+5. Plan a limited rollout with support coverage, a credential-revocation exercise, exception handling, and weekly evidence sampling.
+6. Present a scale/revise/hold/stop recommendation at day 90, including adverse effects and unresolved gaps.
 
-The approved change authority authorizes the exact environment and stage. Approval of an audit pilot is not approval of deny, modify, remediation, tenant-root assignment, management-group restructuring, or production scale.
+**Expected output:** a charter, decision contract, named operating roster, cost ledger, and phased pilot backlog. **Checkpoint:** another team can identify who approves a sensitive action, who responds at failure time, and who may stop the service.
 
-### Risk acceptance
+## Service measures and cadence
 
-Only the delegated business or risk authority accepts residual risk. Platform teams can describe technical risk but should not silently accept business consequences.
+| Measure | Owner | Decision it informs |
+|---|---|---|
+| Accepted results and human review time | Workload owner | Whether the workflow is useful |
+| Approval latency and queue age | Approval authority | Whether approval capacity supports demand |
+| Confirmed false-denial rate | Control owner | Whether rules need narrowing or correction |
+| Unguarded action paths found | Platform / security | Whether access can expand |
+| Evidence reconstruction time and missing records | Platform / assurance | Whether decisions can be investigated |
+| Cost per accepted task and usage mismatch | FinOps | Whether economics and budgets are credible |
+| Incident containment and recovery time | Platform | Whether the service is operable |
+| Exception age and repeated renewals | Governance product owner | Whether the supported workflow needs redesign |
 
-### Financial recognition
-
-FinOps or finance validates cash savings and cost avoidance. Engineers may report capacity or recommendation value but should not relabel it as realized financial benefit.
-
-## Exception lifecycle
-
-An exception is a governed decision, not a way to silence a dashboard.
-
-1. **Request:** identify control, resource scope, business need, and duration.
-2. **Assess:** evaluate risk, alternatives, cost, and downstream impact.
-3. **Decide:** approve, reject, or require a narrower scope or compensating control.
-4. **Implement:** create the Azure exemption or operating record with metadata and expiry.
-5. **Monitor:** verify scope, use, compensating control, and new risk signals.
-6. **Review:** close, renew with new evidence, narrow, or escalate before expiry.
-7. **Reconcile:** remove obsolete technical exemptions and confirm compliance state.
-
-Minimum fields are available in the [exception template](../framework/templates/exception-record.md).
-
-## Governance service levels
-
-Propose service levels and validate them during a pilot:
-
-| Service | Measure |
-|---|---|
-| New control triage | Time to name owner and decide whether analysis begins |
-| Workload impact review | Time to assess a complete request |
-| Exception decision | Time by risk tier, excluding requester delay |
-| Critical false positive | Time to acknowledge, contain, and decide rollback |
-| Remediation | Time from confirmed finding to disposition by severity |
-| Evidence request | Time to produce a reconstructable record |
-| Policy version review | Time from material upstream change to impact decision |
-
-Targets remain proposals until the operating team and workload owners confirm capacity and risk appetite.
-
-## Review cadence
-
-- **Continuous:** deployment failures, critical policy effects, privileged changes, and monitoring outages.
-- **Weekly:** material exceptions, high-severity findings, rollback events, and aged remediation.
-- **Monthly:** service levels, policy coverage, false positives, workload feedback, cost, and evidence gaps.
-- **Quarterly:** control purpose, built-in versions, access reviews, exception renewal, realized value, and retirement candidates.
-- **Event-driven:** regulation, acquisition, material incident, platform retirement, new Azure service, region expansion, or business-model change.
-
-## Operating health measures
-
-- Percentage of controls with named owners and current reviews.
-- Percentage of findings with a disposition and due date.
-- Exception count, age, expiry, and renewal rate.
-- False-positive and rollback rates.
-- Workload onboarding lead time.
-- Failed deployments and waiting time attributable to governance.
-- Evidence completeness and reconstruction time.
-- Governance build/run cost and realized outcome.
-- Number of controls retired or simplified based on evidence.
+Define targets with the team; this repository supplies no production service-level guarantee. Review incidents continuously, queues and exceptions weekly, outcomes and economics monthly, and authority and control necessity quarterly. Revalidate after a model/provider change, AGT upgrade, new tool, changed identity boundary, incident, or material change in pricing or data sensitivity.

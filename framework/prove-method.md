@@ -8,7 +8,9 @@ last_verified: 2026-09-09
 
 ## Purpose
 
-PROVE is the Lab's original operating loop for turning a cloud-governance concern into a bounded, testable, and economically accountable decision.
+PROVE is the Lab's original operating loop for turning an agent or cloud-governance concern into a bounded, testable, and economically accountable decision. It is an operating method, not an upstream AGT API.
+
+For the current runnable exercise, follow the [agent governance decision](templates/agent-governance-decision.example.json): profile a cloud-operations assistant, resolve tool authority and cost, operationalize the YAML host, verify execution/evidence, and evolve from observed results. The older metadata-query example remains supplementary Azure background.
 
 ```text
 Profile → Resolve → Operationalize → Verify → Evolve

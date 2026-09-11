@@ -1,15 +1,9 @@
 # Contributing
 
-Public review and issue-style feedback are welcome once the repository is published. External code and content contributions are not yet accepted because the project name and license model remain provisional.
+Corrections and review feedback are welcome. Original code and content remain under the existing [license terms](LICENSE.md); external contributions and reusable distribution require an intentional owner decision on licensing.
 
-For now:
+Useful feedback includes a reproducible synthetic case, expected and observed behavior, platform/interpreter versions, relevant policy format, and a primary source for current vendor claims.
 
-- suggest corrections with a primary source and the date checked;
-- distinguish observed evidence from assumptions and proposals;
-- use synthetic examples only;
-- do not submit employer, client, tenant, billing, security, or personal data;
-- do not copy Microsoft or third-party code, policies, text, diagrams, icons, or screenshots without a compatible license and attribution review;
-- do not claim that a control establishes legal or regulatory compliance; and
-- identify preview features, paid dependencies, regional limitations, and revalidation triggers.
+Use [AGT's official repository](https://github.com/microsoft/agent-governance-toolkit) for upstream bugs. This companion has an original emulator and a separate released-AGT example; identify which one your report concerns.
 
-Before external pull requests open, the owner should select licenses, contribution terms, a code of conduct, and a sign-off approach.
+Before proposing changes, run the tests and repository validation described in [README](README.md). Keep secrets, real environment data, private conversations and employer/client material out of changes. State exactly which client, transport, runtime and environment were tested; do not turn a source reference into an execution claim.

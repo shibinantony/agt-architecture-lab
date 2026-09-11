@@ -1,6 +1,6 @@
 ---
 status: source-register
-last_verified: 2026-09-09
+last_verified: 2026-09-11
 owner: Shibin Antony
 ---
 
@@ -9,6 +9,25 @@ owner: Shibin Antony
 ## Use
 
 This register records the primary public sources behind current platform statements. A link is not an endorsement of the Lab, and a source does not validate the Lab's original methods. Recheck sources before implementation because Azure services, policy definitions, limits, prices, licensing, previews, and retirement dates change.
+
+## AGT and executable lab references
+
+The project now studies agent runtime governance. AGT stands for **Agent Governance Toolkit**. The lab's own policy schema and implementation are explained separately from upstream APIs. Version-specific source findings are in the [AGT reference](agt-reference.md); execution evidence is in [validation](validation.md).
+
+| Subject | Primary source | What it establishes | Checked |
+|---|---|---|---|
+| Microsoft AGT | [Official repository](https://github.com/microsoft/agent-governance-toolkit) | Project identity and entry point to source, examples and releases | 2026-09-11 |
+| Released AGT API | [v4.1.0 source](https://github.com/microsoft/agent-governance-toolkit/tree/0de71ca6c95cf8b9b975ac96f48eaa7826bbe258) | Release-specific package and wrapper interface | 2026-09-11 |
+| ACS transition | [Pinned breaking changes](https://github.com/microsoft/agent-governance-toolkit/blob/0533ceaf6c5b0975bfc71bff42f6ccd2d34c8adf/BREAKING_CHANGES.md) | Current development APIs and schemas differ from older releases | 2026-09-11 |
+| MCP transport | [Protocol architecture](https://modelcontextprotocol.io/docs/learn/architecture) | Client/server tool discovery and invocation | 2026-09-11 |
+| Python MCP | [SDK v1.30.0](https://github.com/modelcontextprotocol/python-sdk/tree/v1.30.0) | API version pinned by the optional lab server | 2026-09-11 |
+| Codex CLI | [Official MCP documentation](https://developers.openai.com/codex/mcp) | Stdio registration and TOML configuration; checked alongside installed CLI help | 2026-09-11 |
+| Gemini CLI | [Official MCP documentation](https://geminicli.com/docs/tools/mcp-server/) | Project MCP configuration, commands and trust setting; installed help checked | 2026-09-11 |
+| AI gateway | [API Management capabilities](https://learn.microsoft.com/en-us/azure/api-management/genai-gateway-capabilities) | Mediation and controls for routed AI traffic; availability varies by capability/tier | 2026-09-11 |
+
+Revalidate when the pinned SDK, CLI, adapter, policy format or deployment topology changes. Checking a link does not mean the complete upstream stack was executed. The original Azure sources below retain their original review dates unless separately refreshed.
+
+## Azure platform background
 
 | Area | Primary source | Claim supported | Checked | Revalidation trigger |
 |---|---|---|---|---|
@@ -41,7 +60,7 @@ This register records the primary public sources behind current platform stateme
 | Deployment stacks | [Create and deploy deployment stacks](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/deployment-stacks) | Deployment stacks support resource lifecycle management and deny settings; unmanage actions require care | 2026-09-09 | Behavior or known limitations change |
 | Blueprints retirement | [Azure Blueprints overview](https://learn.microsoft.com/en-us/azure/governance/blueprints/overview) | Blueprints entered phased retirement on 2026-07-31 and is scheduled to retire on 2027-01-31; migration points to deployment stacks and template specs | 2026-09-09 | Retirement date or migration guidance change |
 | EPAC | [Enterprise Azure Policy as Code](https://github.com/Azure/enterprise-azure-policy-as-code) | An existing Azure open-source solution manages enterprise Policy as Code; integration should be evaluated before rebuilding similar orchestration | 2026-09-09 | Project status, license, or desired-state behavior change |
-| Naming conflict | [Microsoft Agent Governance Toolkit announcement](https://opensource.microsoft.com/blog/2026/04/02/introducing-the-agent-governance-toolkit-open-source-runtime-security-for-ai-agents/) | Microsoft publicly launched a different project using the Agent Governance Toolkit name and AGT acronym | 2026-09-09 | Project rename or status change |
+| AGT origin | [Microsoft Agent Governance Toolkit announcement](https://opensource.microsoft.com/blog/2026/04/02/introducing-the-agent-governance-toolkit-open-source-runtime-security-for-ai-agents/) | Microsoft introduced Agent Governance Toolkit for agent runtime governance; it is the subject of this companion lab | 2026-09-11 | Project rename or status change |
 | AGT mark | [Agent Governance Toolkit charter](https://github.com/microsoft/agent-governance-toolkit/blob/main/CHARTER.md) | The official charter states that “Agent Governance Toolkit” and “AGT” are trademarks | 2026-09-09 | Charter change |
 | Microsoft names | [Microsoft trademark and brand guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks) | Microsoft provides restrictions and attribution requirements for use of its brand assets | 2026-09-09 | Legal-guidance change |
 

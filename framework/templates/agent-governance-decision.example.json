@@ -1,0 +1,147 @@
+{
+  "schema_version": "0.1.0",
+  "contract_id": "AGTLAB-DEMO-001",
+  "title": "Govern synthetic agent tool calls before execution",
+  "status": "fixture-tested",
+  "information_classification": "public-synthetic",
+  "problem": {
+    "business_outcome": "Produce a reviewable sandbox inventory report while bounding agent tool authority and synthetic cost.",
+    "risk_statement": "An assistant may propose prohibited actions, access outside its scope, or repeat tools beyond an intended allowance.",
+    "beneficiary": "Synthetic engineering, security and FinOps teams",
+    "baseline": "The original repository had no runnable agent tool enforcement example.",
+    "evidence_status": "observed"
+  },
+  "scope": {
+    "azure_scope_level": "none-local-fixture",
+    "scope_reference": "synthetic-estate-only",
+    "included": [
+      "One local GovernanceRuntime instance and its five named synthetic tools"
+    ],
+    "excluded": [
+      "Real Azure resources and credentials",
+      "Client shell, other MCP tools and model traffic",
+      "Distributed budgets and authenticated approvals"
+    ],
+    "criticality": "learning"
+  },
+  "control": {
+    "objective": "Permit approved fixture reads, refuse out-of-scope or destructive requests, hold deployment proposals and enforce a synthetic session budget.",
+    "control_type": [
+      "preventive",
+      "detective"
+    ],
+    "mechanism": "Original Python tool host with strict YAML policy, guarded dispatch and local evidence",
+    "definition_reference": "lab/policy.yaml",
+    "parameters": {
+      "policy_schema": "agt-architecture-lab/v1",
+      "session_budget_usd": 0.05,
+      "allowed_resource_groups": [
+        "rg-agt-lab"
+      ]
+    }
+  },
+  "accountability": {
+    "business_risk_owner": "Synthetic governance sponsor",
+    "control_owner": "Synthetic FinOps control owner",
+    "platform_operator": "Synthetic cloud platform team",
+    "exception_authority": "Synthetic governance product owner",
+    "assurance_owner": "Synthetic independent reviewer"
+  },
+  "evidence": {
+    "sources": [
+      {
+        "type": "local-fixture",
+        "reference": "lab/fixtures/resources.json",
+        "status": "available"
+      },
+      {
+        "type": "control-test",
+        "reference": "tests/test_lab.py",
+        "status": "available"
+      },
+      {
+        "type": "primary-documentation",
+        "reference": "docs/agt-reference.md",
+        "status": "available"
+      }
+    ],
+    "tests": [
+      {
+        "name": "Offline demo",
+        "expected": "Three allowed, six denied and one approval-required request; three handler executions and 0.05 synthetic USD.",
+        "status": "passed"
+      },
+      {
+        "name": "Deny and approval execution gate",
+        "expected": "No forbidden or pending request reaches a handler.",
+        "status": "passed"
+      },
+      {
+        "name": "Budget and evidence failures",
+        "expected": "Concurrent calls cannot overdraw one runtime; audit failure blocks further execution.",
+        "status": "passed"
+      }
+    ],
+    "freshness_expectation": "Generate new local session evidence for each policy or runtime change.",
+    "retention": "Only synthetic examples are tracked; generated sessions remain in ignored artifacts directories.",
+    "limitations": [
+      "The actor is a trusted local fixture, not an authenticated identity.",
+      "Evidence is local, unsigned and editable.",
+      "Budget state belongs to one runtime and resets on restart.",
+      "No real cloud or model-provider behavior is established by the emulator."
+    ]
+  },
+  "rollout": {
+    "current_stage": "local-fixture",
+    "planned_stages": [
+      "local-fixture",
+      "read-only-baseline",
+      "sandbox-audit"
+    ],
+    "scale_gate": "Validate the exact upstream host, identity, scope, protected evidence, metering, bypass controls and operational ownership before a real sandbox pilot.",
+    "rollback_trigger": "A denied action executes, evidence fails, a caller changes its authority, or observed cost exceeds the agreed boundary.",
+    "rollback_owner": "Synthetic platform owner",
+    "stop_rule": "Stop the tool service and investigate on an enforcement failure; do not enable external writes from this local example."
+  },
+  "economics": {
+    "currency": "USD",
+    "measurement_period": "One synthetic offline demo session",
+    "costs": [
+      {
+        "category": "operating-cost",
+        "description": "Fictional fixed tool charges used only to demonstrate admission control.",
+        "amount": 0.05,
+        "status": "observed",
+        "evidence": "Local demo summary; not a provider bill or production operating cost."
+      }
+    ],
+    "benefits": [
+      {
+        "category": "risk-reduction",
+        "description": "Demonstrated refusal of the supplied prohibited requests; financial value is unmeasured.",
+        "amount": null,
+        "status": "unknown",
+        "evidence": "Local negative tests; no organizational benefit or savings measured."
+      }
+    ],
+    "delivery_friction_metric": "Compare accepted task completion, false denials and approval waiting time in a future pilot."
+  },
+  "review": {
+    "last_reviewed": "2026-09-11",
+    "next_review": "2026-10-11",
+    "triggers": [
+      "Policy or tool implementation changes",
+      "Upstream AGT or MCP SDK migration",
+      "Introduction of live credentials or external operations"
+    ]
+  },
+  "assumptions": [
+    "Synthetic cloud operations provide a useful learning workflow.",
+    "The host process, fixture and policy are trusted for this local exercise."
+  ],
+  "known_limits": [
+    "Local tests do not establish production readiness or full AGT/ACS conformance.",
+    "No approval grant or external deployment executor is implemented.",
+    "Costs and resource records are synthetic."
+  ]
+}

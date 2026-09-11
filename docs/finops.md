@@ -1,185 +1,106 @@
 ---
 status: learning-prototype
-tested_scope: economic-model-design
-last_verified: 2026-09-09
+tested_scope: economic-model-design-and-synthetic-example
+last_verified: 2026-09-11
 ---
 
-# FinOps and governance economics
+# FinOps for governed agent workloads
 
-## Executive position
+Measure the cost of obtaining an accepted business result. An agent can consume model tokens, retry tools, hold approvals open, and produce logs even when its final task fails. Agent governance should make those decisions visible and bounded; the economics also need finance ownership and billing reconciliation.
 
-Governance and FinOps are one operating conversation. Guardrails influence where, how, and at what cost teams consume cloud services; cost signals reveal where governance is missing, too rigid, or economically ineffective.
+This guide is an original companion to [Microsoft Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit). Its enterprise controls are design requirements to evaluate, not claims that this local emulator implements a production billing platform.
 
-The Lab uses the Microsoft-aligned FinOps lifecycle of **Inform → Optimize → Operate**, while adding a second ledger for the cost and delivery friction of governance itself.
+## Keep the cost boundaries explicit
 
-## Two economic questions
-
-### 1. Are we governing Azure value and cost?
-
-- Can spend be allocated to an accountable workload, owner, environment, and business purpose?
-- Are budgets, forecasts, and anomalies reviewed by people who can act?
-- Are idle and underused resources investigated safely?
-- Are reservations, savings plans, and licenses matched to durable demand?
-- Is unit cost connected to a business outcome?
-
-### 2. Is governance itself economically justified?
-
-- How much time and platform cost does the control consume?
-- Does it prevent rework, loss, or duplicated implementation?
-- Does it delay teams or create avoidable failed deployments?
-- Are monitoring and retention proportional to evidence needs?
-- Should the control be simplified, automated, narrowed, or retired?
-
-## FinOps lifecycle
-
-### Inform
-
-- Define allocation dimensions before resources are created.
-- Use subscription, resource-group, and resource metadata deliberately.
-- Configure cost views, budgets, forecast alerts, and anomaly response.
-- Identify unallocated and shared cost.
-- Establish baselines and unit measures.
-- Make data freshness, agreement type, scope, and known gaps visible.
-
-### Optimize
-
-- Review Azure Advisor and workload-specific recommendations.
-- Identify idle, orphaned, stopped-but-billed, or oversized resources.
-- Evaluate architectural and scheduling changes, not just SKU changes.
-- Review reservation and savings-plan coverage and utilization.
-- Verify that an implemented action produced an observed benefit.
-- Balance cost against reliability, security, performance, sustainability, and delivery needs.
-
-### Operate
-
-- Assign financial accountability to platform and workload owners.
-- Run a regular cost and value review.
-- Track action age, decision, owner, realized outcome, and reversal risk.
-- Apply cost-related policies progressively and measure developer impact.
-- Connect subscription vending, budgets, tagging, and decommissioning.
-- Review the FinOps and governance control set when business demand changes.
-
-## Allocation model
-
-Use the smallest stable set of dimensions that supports decisions. An initial candidate set is:
-
-| Dimension | Purpose | Important caution |
-|---|---|---|
-| Workload or product | Business ownership and unit economics | Use a stable identifier, not a changing display name |
-| Owner | Action routing | Prefer a maintained group or system reference over personal data |
-| Environment | Lifecycle and cost expectation | Define permitted values centrally |
-| Cost center | Financial allocation | Validate against the finance source of truth |
-| Business criticality | Optimization and risk trade-off | Do not treat all nonproduction resources as disposable |
-| Data classification | Cost and control context | Do not place sensitive values in tags |
-
-Tags have limitations: not every charge is taggable, values are not retroactive, and direct resource tags may differ from Cost Management tag inheritance. A tag-coverage percentage is not the same as accurate financial allocation.
-
-## Initial FinOps control objectives
-
-| Objective | Signal | Action owner | Evidence |
+| Boundary | What consumes resources | Where a production limit belongs | What this lab does |
 |---|---|---|---|
-| Allocate spend | Percentage of cost mapped to approved workload and cost center | FinOps and workload owner | Cost export and mapping result |
-| Detect overspend | Budget or forecast threshold reached | Workload owner | Alert, investigation, and decision |
-| Detect anomalies | Material unexpected change | FinOps and service owner | Anomaly case and disposition |
-| Govern expensive choices | Disallowed or review-required SKU/type request | Platform and architecture owner | Audit result and approved exception |
-| Remove avoidable waste | Idle or orphan candidate confirmed | Workload owner | Verification, action, and post-action cost |
-| Manage commitments | Coverage and utilization outside target | FinOps owner | Purchase/adjust/hold decision and observed utilization |
-| Control telemetry cost | Ingestion or retention outside need | Platform observability owner | Volume, tier, retention, and decision |
-| Decommission completely | Retired workload still consuming cost | Workload and platform owner | Closure checklist and residual-cost check |
+| Model / provider | Input, output, additional reasoning or cached usage where billed, retries, fallback models | Authorized model gateway or provider-facing application with usage accounting | Makes no model calls; does not count tokens or enforce provider budgets |
+| Tool execution | Queries, jobs, paid APIs, execution time | Guarded tool service before work is admitted | Applies fixed fictional USD costs and a per-session limit |
+| Azure workload | Compute, storage, network, managed services | Resource configuration, workload design, financial review, and separately designed automation | Reads synthetic fixtures and returns illustrative estimates |
+| Governance service | Gateway, policy evaluation, evidence storage, monitoring, support, review | Platform budgets, retention policy, capacity planning, operating ownership | Writes local evidence and summaries |
 
-## Budgets are not hard caps
+The cost returned by `estimate_cost` describes a synthetic Azure resource. The `cost_usd` charged to call that tool is a separate teaching value. Neither is an invoice or current Azure price.
 
-Azure budgets and cost alerts notify based on actual or forecast thresholds; they do not, by themselves, stop cloud consumption. Any automated response must be designed as a separate control with workload criticality, authorization, and failure safety. Never auto-stop a production resource merely because a budget threshold was crossed.
+## Run the budget exercise
 
-## Governance cost ledger
+After [setup](lab-guide.md), run:
 
-Record at least:
-
-| Cost category | Examples |
-|---|---|
-| Build | Architecture, control design, queries, IaC, tests, documentation |
-| Platform | Log ingestion, retention, storage, automation, dashboards, security plans |
-| Operate | Monitoring, triage, policy-version review, support, evidence preparation |
-| Remediate | Engineering change, outage risk, reconfiguration, data movement |
-| Exception | Review, approval, monitoring, renewal, compensating controls |
-| Adoption | Training, onboarding, workload-team consultation |
-| Delivery friction | Failed builds, waiting time, false positives, manual approval delay |
-| Exit | Rollback, migration, identity removal, data deletion, tool replacement |
-
-Prices, licensing, and included capabilities change. Record the region, agreement, currency, pricing date, and calculator or invoice basis instead of embedding durable price claims in this repository.
-
-## Value classification
-
-Do not blend these categories:
-
-| Category | Recognition rule |
-|---|---|
-| Cash saving | A real future cash outflow is reduced and finance validates it |
-| Cost avoidance | A planned or likely future cost is prevented |
-| Capacity release | Time is freed; record how it is redeployed before monetizing it |
-| Revenue enablement | Governance materially shortens time to an evidenced revenue outcome |
-| Risk reduction | Exposure or incident likelihood/impact is reduced; report separately unless finance approves valuation |
-| Recommendation value | Potential only; not realized value |
-
-```text
-Net realized value
-  = verified gross cash saving and approved cost avoidance
-  - implementation cost
-  - ongoing operating cost
-  - quantified delivery friction
+```shell
+python -m lab demo
 ```
 
-Avoid monetizing the same outcome twice. For example, do not count released engineering hours as both labor savings and faster delivery unless each conversion is separately evidenced.
+Open the session's `summary.md` and `evidence.jsonl` beneath `artifacts/lab`. The supplied [lab policy](../lab/policy.yaml) sets `max_session_cost_usd: 0.05` and these fictional tool charges:
 
-## Unit economics
+| Allowed operation | Synthetic charge | Cumulative charge for these three calls |
+|---|---:|---:|
+| `inventory_resources` | $0.01 | $0.01 |
+| `estimate_cost` | $0.02 | $0.03 |
+| `create_governance_report` | $0.02 | $0.05 |
 
-Choose a unit connected to value, such as:
+The next otherwise allowed $0.01 call exceeds that session limit and is denied. Denied and approval-pending calls do not execute or consume the lab's tool budget. These values illustrate admission control, not measured consumption. A new process/session starts a new budget: restarting the CLI is not a way to enforce a daily or organization-wide spending cap.
 
-- cost per active customer or tenant;
-- cost per transaction, inference, report, or job;
-- cost per workload environment;
-- governance cost per subscription onboarded;
-- evidence-preparation hours per control; or
-- remediation effort per noncompliant resource.
+**Checkpoint:** identify the record that explains the budget denial, distinguish tool charge from the returned Azure estimate, and explain why a Codex or Gemini client could still incur model usage after the denial.
 
-A lower unit cost is useful only when service quality, reliability, security, and business outcome remain acceptable.
+## A worked AI cost example
 
-## FinOps scorecard
+All numbers below are fictional teaching assumptions, with no association to any provider's current pricing. Assume input costs $2 per million tokens and output costs $8 per million tokens, without cached or other separately billed categories.
 
-| Dimension | Metric | Required interpretation |
+```text
+First attempt: 6,000 input + 1,000 output tokens
+  = (6,000 × $2 + 1,000 × $8) / 1,000,000 = $0.020
+
+Retry: 3,000 input + 500 output tokens
+  = (3,000 × $2 + 500 × $8) / 1,000,000 = $0.010
+
+Monthly model cost: 1,000 first attempts + 200 retries
+  = 1,000 × $0.020 + 200 × $0.010 = $22
+```
+
+Suppose human review accepts 800 reports. A fictional monthly cost ledger is:
+
+| Category | Assumed cost |
+|---|---:|
+| Model usage, including retries | $22 |
+| Tool hosting and gateway | $50 |
+| Evidence storage and monitoring | $8 |
+| Platform support and policy maintenance | $120 |
+| Human review and approval | $400 |
+| Allocated build cost for this month | $100 |
+| **Total** | **$700** |
+
+Cost per accepted report is **$700 / 800 = $0.875**. Dividing only model cost by all 1,000 attempts would hide failures and most operating cost. Compare $0.875 with a measured baseline at the same quality and scope before claiming value. The lab's fictional $0.05 tool allowance is not added to this ledger as if it were a real bill.
+
+## From a local allowance to a production budget
+
+The [AGT reference](agt-reference.md) distinguishes upstream cost-governance designs from the emulator's admission check. The separate released-wrapper example validates allow/deny behavior; it does not validate AGT cost accounting or provider metering.
+
+The following is a proposed production design, beyond the lab's fixed per-process counter:
+
+1. **Allocate:** bind workload, cost center, environment, trusted actor, provider/model, and budget period to the request. Decide how shared costs are allocated.
+2. **Reserve before dispatch:** estimate the bounded maximum charge and atomically reserve it against shared remaining budget. Concurrent requests must not each spend the same remaining balance.
+3. **Execute within limits:** constrain output, tool duration, retries, parallel calls, and fallback routes. A denied tool can still be preceded or followed by a billed model request.
+4. **Reconcile actual usage:** replace the reservation with reported usage and release the unused portion. Record rate version, currency, usage dimensions, provider request ID, and task correlation.
+5. **Handle uncertainty:** timeouts do not prove that nothing was billed. Keep ambiguous reservations pending investigation; use idempotency and bounded retries to avoid duplicate actions and charges.
+6. **Close the financial period:** compare gateway/tool usage to provider exports and invoices, explain differences, allocate shared costs, and carry unresolved discrepancies to an owner.
+
+This budget reservation is an accounting hold, distinct from purchasing Azure reservations or savings plans. Commitments require a separate demand and utilization decision. A distributed cap also needs persistent state and controls over alternate credentials and routes; a local YAML limit cannot supply those properties.
+
+Azure budgets notify when thresholds are met; they do not themselves stop consumption. Design any automatic action separately with criticality, authority, and recovery in view. [Microsoft budget guidance](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets).
+
+Cost records can arrive after the operation and remain estimates before invoicing. Resource tags do not cover all usage, and a current resource inventory is not the same population as historical billed usage. Preserve these limitations when reconciling. [Microsoft Cost Management data guidance](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/understand-cost-mgt-data).
+
+## Reporting and ownership
+
+Use the Inform, Optimize, Operate cycle to connect visibility with accountable action. [Microsoft's FinOps framework guidance](https://learn.microsoft.com/en-us/cloud-computing/finops/framework/finops-framework).
+
+| Report | Owner | Review and action |
 |---|---|---|
-| Allocation | Percentage of total cost allocated | Include untaggable/shared-cost method and exclusions |
-| Forecast | Forecast variance | Explain demand change, pricing, and timing |
-| Anomalies | Time to acknowledge and disposition | Distinguish valid demand from waste or incident |
-| Optimization | Verified realized value | Exclude unimplemented recommendations |
-| Commitments | Coverage and utilization | Include lock-in and demand-change risk |
-| Unit economics | Cost per chosen business unit | Pair with quality and outcome metric |
-| Governance cost | Build and monthly run cost | Include people and platform cost |
-| Delivery friction | Failed deployments and wait time caused by controls | Use to improve control design, not bypass risk |
-| Exceptions | Number, age, cost, and expiry posture | High volume can signal a poorly targeted standard |
+| Cost per accepted task, quality, and human review minutes | Workload owner | Weekly: redesign wasteful loops and verify task usefulness |
+| Tokens, retries, fallback usage, reservation age, budget denials | Model / tool platform owner | Daily during pilot: investigate amplification and stale holds |
+| Allocated spend, invoice variance, shared cost, forecast | FinOps / finance | Monthly: reconcile and adjust budgets |
+| Approval queues, false denials, evidence volume, support effort | Governance product owner | Weekly/monthly: change costly controls or operating capacity |
+| Realized value, adverse effects, and investment case | Business owner with finance | Pilot gate/quarterly: scale, revise, hold, or stop |
 
-## Operating cadence
+Track cash savings, cost avoidance, released capacity, delivery improvement, and risk reduction separately. Recommendations are potential value; a blocked synthetic action is not a financial saving. Recognize implemented changes only after evidence and finance review, and do not count the same benefit twice.
 
-- **Weekly:** material anomalies, budget escalations, idle-resource decisions, and urgent exceptions.
-- **Monthly:** allocation quality, forecast variance, realized optimization, telemetry cost, and action aging.
-- **Quarterly:** commitment posture, unit economics, governance lifecycle cost, policy effectiveness, and control retirement.
-- **Event-driven:** new service, pricing or licensing change, acquisition, region expansion, architecture change, or material incident.
-
-## Anti-patterns
-
-- Treating budget alerts as spend prevention.
-- Enforcing tags without a maintained finance mapping.
-- Publishing maximum recommendation value as savings.
-- Buying commitments before demand is stable.
-- Cutting security, backup, logs, or resilience without an approved risk decision.
-- Ignoring the cost of governance tooling and human operation.
-- Optimizing shared infrastructure in a way that hides cross-charge or blast-radius risk.
-- Automating shutdown or deletion without business criticality and recovery checks.
-
-## Primary references
-
-- [Microsoft FinOps Framework](https://learn.microsoft.com/en-us/cloud-computing/finops/framework/finops-framework)
-- [FinOps policy and governance](https://learn.microsoft.com/en-us/cloud-computing/finops/framework/manage/governance)
-- [Plan to manage Azure costs](https://learn.microsoft.com/en-us/azure/cost-management-billing/understand/plan-manage-costs)
-- [Cost Management data limitations](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/understand-cost-mgt-data)
-- [Microsoft FinOps toolkit](https://github.com/microsoft/finops-toolkit)
+Keep provider price, agreement, currency, model/version, effective date, and usage categories in a maintained rate table outside this fictional example. Revalidate when pricing, model routing, workload demand, or billing terms change. The [operating model](operating-model.md) identifies decision rights; the [executive brief](../EXECUTIVE-BRIEF.md) turns the ledger into an investment decision.

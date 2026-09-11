@@ -1,193 +1,112 @@
----
-status: learning-prototype
-tested_scope: conceptual-architecture
-last_verified: 2026-09-09
----
+# Architecture review: AGT in the enterprise system
 
-# Reference architecture
+The central question is: **which trusted component can stop an agent's proposed action before it reaches a privileged tool?** A prompt describes desired behavior; a tool host can enforce a decision. Microsoft's [AGT](https://github.com/microsoft/agent-governance-toolkit) supplies agent-governance components; its current policy direction uses the Agent Control Specification (ACS). See the version-specific [upstream reference](agt-reference.md).
 
-## Purpose
+This is a proposed integration architecture. The executable lab implements the tool-host boundary with an original emulator; it does not deploy the services below.
 
-The architecture connects business outcomes and risks to Azure-native controls and reconstructable evidence. It is a control lifecycle, not a new Azure control plane.
-
-Microsoft describes an Azure landing zone as a platform landing zone plus application landing zones. Governance Evidence Lab sits alongside that model: it helps decide, document, test, and review guardrails; it does not replace the landing-zone architecture or its implementation accelerators.
-
-## Architecture principles
-
-1. **Business risk before mechanism.** Do not begin with a policy definition looking for a problem.
-2. **Native before custom.** Evaluate current built-in capabilities and supported accelerators before adding code.
-3. **Read before write.** Establish scope, permissions, inventory, and baseline evidence before enforcement.
-4. **Progressive exposure.** Move from local fixtures to sandbox audit, canary, and selective enforcement.
-5. **Least privilege by function.** Keep discovery, deployment, remediation, and assurance identities separate where practical.
-6. **Evidence is an output.** A control is incomplete until its decision, deployment, result, exception, and review can be reconstructed.
-7. **Unknown is a valid result.** Inaccessible or stale data must never be represented as compliant.
-8. **Exceptions are controlled decisions.** They require scope, owner, reason, compensating control, expiry, and review.
-9. **Economics are part of control design.** Include lifecycle cost and delivery friction, not only expected loss reduction.
-10. **Every control can be reversed or retired.** Define rollback and stop conditions before scale.
-
-## Context
+## End-to-end placement
 
 ```mermaid
 flowchart TB
-    L[Executive sponsor<br/>business and risk owners]
-    G[Governance product team]
-    W[Workload teams]
-    A[Assurance and audit]
-    R[Governance Evidence Lab repository]
-    Z[Azure environment]
-    F[Finance and FinOps]
+    O[Business owner, security and FinOps] --> P[Versioned policy, budget and exceptions]
+    P --> CI[Review, adversarial tests and release gates]
+    CI --> CP[Trusted policy distribution]
 
-    L -->|risk appetite, outcomes, funding| G
-    F -->|cost, allocation, realized value| G
-    G -->|decision contracts and paved road| R
-    W -->|requirements, impact, evidence, exceptions| R
-    R -->|reviewed queries and future deployments| Z
-    Z -->|inventory, policy, access, security, cost signals| R
-    R -->|scorecards and limitations| L
-    R -->|testable evidence| A
-    A -->|challenge and findings| G
+    subgraph Runtime[Workload runtime boundary]
+        A[Agent application or managed CLI]
+        H[Tool host / MCP server]
+        G[AGT / ACS checkpoint integration]
+        T[Tool implementation]
+        A -->|proposed tool and arguments| H
+        H --> G
+        G -->|allow only| T
+        G -->|deny or hold| B[Return decision, no execution]
+    end
+
+    CP --> G
+    A -->|model requests| GW[AI gateway]
+    GW --> M[Approved model providers / Foundry]
+    T --> API[Enterprise APIs and Azure data/control planes]
+    ID[Entra / workload identity and narrow roles] --> H
+    ID --> API
+    AP[Azure Policy and landing-zone baseline] --> AZ[Azure hosting, networking and configuration]
+    AZ -.-> Runtime
+    NW[Container isolation and egress controls] -.-> Runtime
+    G --> EV[Decision and execution events]
+    GW --> US[Usage, tokens and latency]
+    API --> EV
+    EV --> OBS[OpenTelemetry / Monitor / incident response]
+    US --> FIN[FinOps allocation and reconciliation]
+    BILL[Provider invoices / Cost Management exports] --> FIN
+    OBS --> REVIEW[Control effectiveness and pilot review]
+    FIN --> REVIEW
+    REVIEW --> O
 ```
 
-## Logical layers
+Only traffic routed through an enforcement point is covered. A coding CLI's built-in shell or another MCP server is a separate path. In an enterprise deployment, isolate the agent, remove direct privileged credentials, restrict egress, and make the governed host the only route to the protected operation. A CLI on an unrestricted developer machine cannot supply that boundary through configuration alone.
 
-| Layer | Responsibility | Azure capabilities | Lab artifact |
+## Distinct responsibilities
+
+| Layer | Enforces or observes | Does not establish by itself | Primary reference |
 |---|---|---|---|
-| Intent and accountability | Define outcome, risk, tolerance, decision rights, funding, and service levels | Cloud Adoption Framework guidance | Charter, RACI, decision contract |
-| Resource organization | Establish control inheritance and workload boundaries | Tenant, management groups, subscriptions, resource groups | Scope model and subscription intake |
-| Identity and authority | Determine who and what can inspect, change, remediate, and approve | Microsoft Entra groups and identities, Azure RBAC, PIM | Permission model and access evidence |
-| Guardrails | Prevent, detect, or correct disallowed resource state | Azure Policy definitions, initiatives, assignments, exemptions, remediation | Control catalog and policy lifecycle |
-| Delivery | Version, review, validate, preview, and deploy change | Git, GitHub Actions, Bicep or Terraform, template specs, deployment stacks | Pipeline gates and deployment evidence |
-| Inventory and posture | Discover resources, relationships, assignments, changes, and findings | Azure Resource Graph, Policy Insights, Defender for Cloud | Queries and timestamped evidence snapshot |
-| Observability and response | Detect changes and failures and route action | Activity logs, diagnostic settings, Azure Monitor, Log Analytics, action groups | Monitoring contract and response record |
-| Economics | Allocate, alert, forecast, optimize, and measure value | Cost Management, Advisor, budgets, anomaly alerts, FinOps toolkit | FinOps scorecard and value ledger |
-| Assurance | Test design and operating effectiveness | Native results plus independent sampling | Test result, finding, remediation, and review |
+| AGT / ACS host integration | Action decisions at instrumented checkpoints | OS isolation or interception of code that bypasses the host | [AGT](https://github.com/microsoft/agent-governance-toolkit) |
+| MCP | Tool discovery and invocation | Authorization or trustworthy arguments automatically | [MCP architecture](https://modelcontextprotocol.io/docs/learn/architecture) |
+| Entra / Azure RBAC | Identity and operations at a resource scope | Whether an authorized action is appropriate for this task | [RBAC](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview) |
+| AI gateway | Controls and telemetry for routed model/API traffic | Interception of local tools or files | [API Management](https://learn.microsoft.com/en-us/azure/api-management/genai-gateway-capabilities) |
+| Content safety / data protection | Inspection of selected content flows | Permission to run a tool | [Content Safety](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/overview) |
+| Azure Policy / landing zone | Resource configuration and platform foundation | Evaluation of every agent tool call | [Policy](https://learn.microsoft.com/en-us/azure/governance/policy/overview), [landing zones](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/landing-zone/) |
+| FinOps / Cost Management | Allocation, forecasts, reconciliation and ownership | An instantaneous global spending cap | [Budgets](https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets), [FinOps toolkit](https://github.com/microsoft/finops-toolkit) |
 
-## Governance Decision Contract flow
+## One request, from intent to evidence
 
 ```mermaid
-flowchart TD
-    A[Business outcome or risk] --> B[Control objective]
-    B --> C{Evidence supports action?}
-    C -- No --> C1[Record assumption<br/>collect baseline]
-    C -- Yes --> D[Choose scope and Azure mechanism]
-    D --> E[Name owner, operator, test, and economics]
-    E --> F[Validate locally and inspect proposed change]
-    F --> G[Audit-only sandbox or canary]
-    G --> H{Expected behavior and impact?}
-    H -- No --> I[Rollback, revise, or stop]
-    H -- Yes --> J[Selective enforcement decision]
-    J --> K[Monitor evidence, exceptions, cost, and friction]
-    K --> L[Periodic or event-driven review]
-    L --> B
+sequenceDiagram
+    participant C as Agent / CLI
+    participant H as Trusted tool host
+    participant P as Policy and budget evaluator
+    participant E as Evidence sink
+    participant T as Scoped tool
+    C->>H: Tool name and untrusted arguments
+    H->>H: Validate shape; obtain trusted context
+    H->>P: Tool, scope, policy version and budget
+    P-->>H: Allow / deny / approval required
+    H->>E: Record decision before side effect
+    alt Allow and evidence accepted
+        H->>T: Invoke validated operation
+        T-->>H: Result and observed usage
+        H->>E: Record completion/failure and usage
+        H-->>C: Result and decision reference
+    else Deny, pending approval or evidence unavailable
+        H-->>C: Refuse/hold; no execution
+    end
 ```
 
-## Resource hierarchy
+Production budgeting should reserve a worst-case cost atomically before execution and reconcile actual usage afterward. Calls that fail after sending a request can still cost money; an unknown completion is not permission to retry indefinitely. The lab uses trusted fixed synthetic costs and one runtime instance. This is the lab's design, not a claim that every AGT component uses pre-execution reservations; [upstream cost semantics differ](agt-reference.md).
 
-The target hierarchy is an organizational decision, not a toolkit default. The Lab follows these design heuristics:
+## Concrete example
 
-- Use management groups primarily to group subscriptions that need common policy, security, or compliance settings.
-- Keep the hierarchy reasonably flat and avoid copying a volatile organization chart.
-- Limit assignments at tenant root because inherited impact is harder to isolate.
-- Maintain explicit sandbox and decommissioned paths.
-- Treat subscriptions as important workload, management, billing, and scale boundaries.
-- Give platform teams only the broad access they need; avoid broad workload-team RBAC at management-group scope.
+An engineer asks, “Review the sandbox inventory and suggest a cheaper configuration.” Inventory and cost-estimation tools run against synthetic data. A subsequent deployment request returns `require_approval`; a deletion request returns `deny`. Only an allowed request enters a handler.
 
-The current Microsoft guidance is linked in the [source register](source-register.md).
+In production, inventory could use a Reader-scoped identity and Azure Resource Graph. Deployment would use a separate executor after verified approval bound to the exact request. The agent should never receive that deployment credential. [Query examples](../toolkit/queries/README.md) provide background, not a wired cloud adapter.
 
-## Identity and permissions
+## Threat and failure review
 
-```mermaid
-flowchart LR
-    U[Human reviewers] -->|group membership| R[Azure RBAC]
-    P[PIM] -->|time-bound activation| R
-    CI[Validation identity] -->|read and validate only| AZ[Azure scopes]
-    CD[Deployment identity] -->|approved scope changes| AZ
-    MI[Remediation identity] -->|control-specific actions| AZ
-    AS[Assurance identity] -->|independent read access| AZ
-```
-
-Key rules:
-
-- Assign roles to groups or managed identities rather than individual users when possible.
-- Use the narrowest practical role and scope.
-- Distinguish Azure control-plane actions from data-plane access.
-- Do not grant a read-only collector write permissions for convenience.
-- Treat Owner and User Access Administrator as privileged and time-bound where available.
-- Grant remediation identities only the operations required by the relevant policy and scope.
-- Record permission gaps because inventory is authorization-trimmed.
-
-## Policy lifecycle
-
-1. Link a documented risk to a control objective.
-2. Evaluate built-in definitions and current versions before authoring a custom definition.
-3. Group related definitions into a coherent initiative only when common ownership and rollout justify it.
-4. Validate definition and assignment structure in CI.
-5. Preview scope and infrastructure change.
-6. Begin with audit or disabled enforcement at a narrow sandbox scope.
-7. Compare expected policy applicability and observed results.
-8. Test representative compliant, noncompliant, exempt, and failure cases.
-9. Review remediation permissions separately from evaluation behavior.
-10. Expand by canary tiers with application-health and compliance gates.
-11. Record time-bound exemptions and compensating controls.
-12. Monitor built-in versions, false positives, incidents, cost, and delivery friction.
-13. Scale, revise, roll back, or retire based on evidence.
-
-## Evidence model
-
-Every material control should be reconstructable through linked records:
-
-```text
-risk/outcome
-  ↔ decision contract and approval
-  ↔ control definition and version
-  ↔ assignment, scope, parameters, and exclusions
-  ↔ deployment identity and change result
-  ↔ compliance or inventory observation and timestamp
-  ↔ exception and expiry, if used
-  ↔ remediation or incident
-  ↔ cost, friction, and outcome review
-```
-
-The v0.1 [Governance Decision Contract schema](../framework/schemas/governance-decision-contract.schema.json) normalizes the decision layer. A future evidence snapshot schema will represent collected results without storing unnecessary tenant details.
-
-## Trust boundaries and failure modes
-
-| Boundary | Failure or abuse | Architectural response |
+| Failure or attack | Required response | Lab / production boundary |
 |---|---|---|
-| Human intent to contract | Vague risk or unaccountable control | Require outcome, owner, evidence, test, and stop rule |
-| Repository to Azure | Unreviewed or over-broad deployment | Protected review, preview, separate identity, narrow scope, manual gate |
-| Policy assignment to workload | False positive or unexpected denial | Audit first, representative tests, canary, exemption, rollback |
-| Remediation identity | Excessive privilege or unintended mutation | Control-specific roles, separate approval, dry-run where possible, bounded scope |
-| Azure to evidence collector | Missing permissions or stale index | Coverage report, timestamp, pagination, retry, explicit unknown state |
-| Evidence store | Sensitive data disclosure or tampering | Minimize, sanitize, restrict, integrity-check, and retain intentionally |
-| Exception path | Permanent or over-broad waiver | Owner, scope, reason, compensating control, expiry, usage and review |
-| FinOps signal to savings claim | Recommendation presented as realized value | Verify implementation and observed effect; separate value categories |
-| Desired-state cleanup | Tool deletes resources it did not safely own | Explicit ownership boundary, detach-first default, reviewed deletion plan |
+| Prompt injection asks to ignore policy | Evaluate in trusted host | Demonstrated for lab calls; no universal injection-prevention claim |
+| Caller supplies cheaper cost or stronger identity | Reject unsupported arguments; derive authority server-side | Synthetic actor and costs; real identity needs authentication |
+| Malformed or missing policy | Fail startup before tools become usable | Runtime tests |
+| Concurrent requests overspend | Atomic reservation shared by all workers | In-process lock; distributed ledger needed in production |
+| Approval forged in tool arguments | Verify external authorization separately | Lab never executes approval-required requests |
+| Evidence sink fails before dispatch | Refuse before side effects and report incident | Local tests; production needs durable sink/recovery |
+| Completion evidence fails after dispatch | Close the session, report uncertainty and reconcile | An action may already have occurred; do not infer absence or retry blindly |
+| Agent edits policy or restarts server | Protect configuration and preserve trusted state | Local files are editable; budget resets on restart |
+| Direct shell/API bypass | Remove credentials, constrain egress, isolate | Outside MCP demonstration |
+| Sensitive data enters requests/results | Minimize evidence and inspect data before egress | Synthetic fixture only; no complete DLP engine |
+| Result lost after a write | Correlate and reconcile before retry | No real writes; production idempotency design needed |
 
-## Greenfield and brownfield
+## Architect's review deliverable
 
-### Greenfield
+Annotate the diagram with trust boundaries. Identify each policy owner, identity authenticator, alternate execution path, update mechanism, global spend ledger, approval verifier, evidence owner, and rollback authority. Create a [decision contract](../framework/templates/agent-governance-decision.example.json) and an [exception record](../framework/templates/exception-record.md).
 
-Start with a landing-zone design and subscription-vending path. Apply a small inherited baseline before workloads arrive, but still validate in sandbox and canary tiers. Greenfield does not eliminate the need for ownership, exceptions, or operational support.
-
-### Brownfield
-
-Discover first. Map existing hierarchies, assignments, access, resources, costs, deployment ownership, exemptions, and business criticality. Do not restructure management groups or introduce broad deny, modify, remediation, or deployment-stack ownership until dependencies and rollback are understood.
-
-## Deployment technology position
-
-- The repository will choose one reference path—Bicep or Terraform—through an architecture decision before adding deployment code.
-- It can document adapters for the other path later.
-- Enterprise Azure Policy as Code can be evaluated rather than rebuilding enterprise policy orchestration; its ownership and desired-state deletion boundaries must be explicit.
-- Azure Blueprints is excluded from new design because Microsoft has announced retirement on January 31, 2027 after phased retirement began in 2026.
-- Deployment stacks may be evaluated for lifecycle ownership, but `actionOnUnmanage` and deny settings require deliberate tests. The safe default for an initial lab is detach, not delete.
-
-## Architecture decisions still open
-
-| Decision | Options | Required evidence |
-|---|---|---|
-| Reference IaC path | Bicep or Terraform | Target audience, skills, ALZ alignment, testability, maintenance |
-| Policy lifecycle engine | Native Bicep/Terraform or EPAC integration | Scale, ownership, drift, desired-state behavior |
-| Evidence store | Git fixture, Azure Storage, Log Analytics, other | Sensitivity, volume, query need, integrity, retention, cost |
-| Reporting | Markdown, Azure Workbook, Power BI, FinOps toolkit | Audience, freshness, access, cost, maintainability |
-| License | Closed prototype, Apache-2.0/CC BY, other | IP intent, contribution model, employer obligations, legal review |
+A sandbox pilot needs evidence for bypass tests, audit failure handling, ownership, metering and rollback. The [control catalog](control-catalog.md), [operating model](operating-model.md) and [FinOps guide](finops.md) turn that review into owned work.

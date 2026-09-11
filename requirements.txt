@@ -1,0 +1,2 @@
+# Core offline lab. No provider SDK or cloud credentials required.
+PyYAML==6.0.3

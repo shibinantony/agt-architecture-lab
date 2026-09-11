@@ -15,6 +15,13 @@ Desktop.ini
 out/
 reports/
 evidence/
+artifacts/
+.venv/
+.venv-agt/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.gemini/
 *.local.json
 
 # Private AI-assistant conversations and continuity material

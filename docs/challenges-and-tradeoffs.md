@@ -1,96 +1,76 @@
 ---
 status: learning-prototype
-tested_scope: risk-analysis
-last_verified: 2026-09-09
+tested_scope: runtime-boundary-and-adoption-risk-analysis
+last_verified: 2026-09-11
 ---
 
-# Challenges and trade-offs
+# Agent governance challenges and trade-offs
 
-## Challenge register
+The central review question is whether every consequential action reaches an effective control with trusted context and usable evidence. This independent lab makes that question concrete for a small set of synthetic tools. For an actual deployment, review [Microsoft AGT's security guidance](https://github.com/microsoft/agent-governance-toolkit/blob/main/SECURITY.md), select an upstream version, and test the full architecture.
 
-| Challenge | Early signal | Mitigation | Primary owner |
-|---|---|---|---|
-| Product-name and acronym confusion | Users assume Microsoft ownership or confuse the project with Microsoft's Agent Governance Toolkit | Use a distinct project name, descriptive Azure subtitle, and non-affiliation notice | Repository owner |
-| Brownfield disruption | Large noncompliant baseline or unknown deployment ownership | Discover first, map dependencies, audit, segment, and canary | Platform owner |
-| Broad policy blast radius | One assignment affects many subscriptions or critical workloads | Limit root assignments, preview, use selectors/overrides where supported, stage exposure | Platform and control owners |
-| Policy false positives | Compliant patterns are denied or reported incorrectly | Representative positive, negative, exception, and not-applicable tests | Control owner |
-| Inherited-policy confusion | Teams cannot explain the effective assignment or parameter | Keep hierarchy flat, document parent scope, produce effective-scope views | Platform owner |
-| Remediation privilege escalation | Managed identity needs broad write access | Separate remediation from evaluation, use narrow roles and scope, independently review | Security / IAM owner |
-| Permanent exceptions | Waivers lack expiry or are repeatedly renewed | Require owner, reason, compensating control, expiry, usage and renewal evidence | Exception authority |
-| Incomplete inventory | Results omit resources because the caller lacks access | Report expected versus visible scope and use `unknown` state | Assessment owner |
-| Eventual consistency | Recent change is absent from Resource Graph or policy result | Timestamp, wait/retry, reconcile with authoritative source, document latency | Evidence owner |
-| Query limits and pagination | Counts differ or only the first page is processed | Implement paging, throttling backoff, row reconciliation, and query tests | Toolkit engineer |
-| Cost-data limitations | Recent charges, tags, credits, or shared costs do not reconcile | Record agreement, scope, freshness, tag inheritance, and allocation method | FinOps owner |
-| Budget misconception | Stakeholders expect a budget to stop spend | State that budgets alert; design any automated response separately and safely | FinOps and workload owners |
-| Telemetry cost growth | Log ingestion and retention rise without a use case | Data collection rules, tiering, sampling, retention review, cost owner | Observability owner |
-| Security-plan cost | Paid capabilities are enabled without an owner or funding | Explicit plan selection, scope, benefit hypothesis, and cost review | Security and FinOps owners |
-| Compliance overclaim | A green policy dashboard is called “compliant” | Distinguish configuration evidence from complete legal, process, and operating assurance | Risk and assurance |
-| Desired-state deletion | A tool removes assignments or resources it considers unmanaged | Define ownership root, detect external management, detach first, review deletion plans | Platform owner |
-| Deployment-stack cleanup | `actionOnUnmanage` deletes an important resource | Sandbox test, explicit ownership, safe default, protected destructive approval | Platform owner |
-| Built-in policy evolution | Definition behavior or version changes unexpectedly | Track versions, review release changes, test upgrades progressively | Control owner |
-| Platform retirement and preview | Design depends on retiring Blueprints or preview Service Groups | Exclude Blueprints from new work; isolate previews behind optional adapters | Architect |
-| RBAC sprawl | Many direct assignments and standing owners | Group-based assignment, narrow scope, PIM, access review, break-glass control | IAM owner |
-| Central bottleneck | Exception and onboarding queues grow | Product service levels, subscription vending, self-service evidence, federated owners | Governance product owner |
-| Shadow IT | Teams bypass controls to deliver | Explain outcomes, provide a usable paved road, measure friction, improve controls | Sponsor and product owner |
-| Confidentiality leakage | Public report contains names, IDs, costs, or topology | Synthetic fixtures, sanitization checks, private raw storage, publication review | Repository and data owners |
-| Skills concentration | Only one engineer understands the toolkit | Documentation, paired reviews, learning sprints, runbooks, ownership rotation | Platform owner |
-| Governance becomes a project | Controls have no review after initial launch | Named product owner, recurring metrics, event-driven review, retirement workflow | Executive sponsor |
+## Runtime and integration risks
 
-## Specific technical cautions
+| Risk / early signal | Lab behavior or limitation | Production response and owner |
+|---|---|---|
+| Identity spoofing: request contains `role`, `actor`, or a claimed environment | Unknown argument fields are denied; identity is still a trusted fixture, not authenticated identity | Verify credentials and delegated authority outside model-controlled input; security / IAM |
+| Scope or classification spoofing: request tries another resource group or labels restricted data as public | Direct resource lookup uses fixture metadata; inventory filters scope/classification | Derive scope and classification from trusted sources, and test stale metadata; data / platform |
+| Unknown or changed tools: a familiar name hides new behavior | Unknown tool names are denied; handlers are fixed local code | Review tool manifests, implementation changes, schemas, and downstream authority; tool owner |
+| YAML ambiguity: duplicate fields, unknown controls, permissive defaults, or invalid costs | Strict startup validation refuses these configurations | Protect policy publication, pin schema/runtime versions, and test migrations; control owner |
+| Approval confusion: assistant says an operation was approved | `require_approval` never executes; there is no approval executor | Bind an authorized approval to exact action, arguments, environment, expiry, and one-time use; approval owner |
+| Client shell or other tools bypass the gate | Only requests reaching this runtime are governed | Restrict credentials, network routes, tool availability, and filesystem authority; platform / security |
+| Agent can change policy or evaluator | Local files and in-process objects are outside the untrusted JSON-input boundary | Separate administration and execution trust; isolate service and deployment identities; platform |
+| Budget evasion through caller prices or concurrent calls | Costs come from validated policy; one runtime lock serializes check, charge, and execution | Test reservations and concurrency across all instances; FinOps / gateway |
+| Restart or another process restores spending allowance | Each new runtime starts a fresh counter and evidence session | Persist shared period/workload budgets and reconcile in-flight work; FinOps / platform |
+| Tool is denied but model spending continues | No model metering or model-route enforcement is implemented | Bound model output, retries, loops, fallbacks, and provider-facing usage; model gateway owner |
+| Evidence sink fails before dispatch | Session closes and handler is not entered | Define fail-closed operation, recovery capacity, and incident routing; evidence platform |
+| Evidence sink fails after dispatch | Handler may have completed; session closes and reports uncertainty | Reconcile the external outcome before retrying; use idempotency and recovery procedures; incident owner |
+| Audit file is edited, removed, or partially lost | Local JSONL is unsigned/editable; policy hash alone does not prove integrity | Use independent storage, access control, integrity checks, missing-event detection, and retention; evidence / assurance |
+| Unlimited denied requests grow evidence or queues | Teaching runtime has no service-wide admission/rate limit | Bound request size, rate, queue depth, log volume, and retention; platform / observability |
+| Prompt injection or hostile tool output changes agent intent | Deterministic checks cover the listed action properties, not general content safety | Test model, content, data-egress, tool-result, and action boundaries together; security / agent owner |
 
-### Audit is safer, not harmless
+AGT's upstream security guidance recommends separating policy execution from a compromised agent's process and using an external evidence store that agents cannot alter. This lab's shared local environment illustrates why those boundaries need deliberate design. [Upstream threat model and operator guidance](https://github.com/microsoft/agent-governance-toolkit/blob/main/SECURITY.md).
 
-Audit assignments can create evaluation load, operational findings, monitoring cost, and remediation pressure. They can also produce misleading results if aliases, modes, applicability, permissions, or data latency are misunderstood.
+## Engineering trade-offs to review
 
-### Deny changes the developer experience
+| Choice | Benefit | Cost or failure to address |
+|---|---|---|
+| Fail closed when authority or evidence is unavailable | Avoids work whose authorization cannot be established | Availability and recovery become part of the control's operating cost |
+| Require human approval for sensitive work | Introduces business judgment at a meaningful point | Queues, timeout, fatigue, replay, and unclear authority can undermine it |
+| Serialize local check and execution | Makes one session's cumulative budget easy to reason about | Does not coordinate multiple processes and limits throughput |
+| Retain minimal audit fields | Reduces disclosure of arbitrary prompts, arguments, and exceptions | Less context for investigations; decide which safe output references are necessary |
+| Use an original small emulator | Makes policy decisions and failures inspectable without cloud access | Cannot establish compatibility, performance, or coverage of the upstream toolkit |
+| Add a real tool adapter | Tests behavior closer to the business workflow | Adds credentials, real side effects, external failure modes, and reconciliation work |
 
-Deny is useful when preventing a well-understood, high-confidence condition is better than remediating it later. It also creates immediate delivery failure. Error messages, owner routing, exceptions, and representative tests are part of the control.
+The local audit trail retains decision and execution status. Full report findings are returned to the caller; they are not automatically a retained report archive. A missing completion record must not be interpreted as proof that no action ran.
 
-### Modify and deploy-if-not-exists require identities
+## Release and organizational risks
 
-These effects can change resources and commonly require managed identities with specific permissions. Treat assignment creation, evaluation, and remediation as separate risk decisions.
+| Risk / early signal | Response | Owner |
+|---|---|---|
+| Source drift: a README example, package, schema, and installed release disagree | Record commit/version, follow version-matched instructions, inspect breaking changes, and rerun representative tests before rollout | Dependency / platform owner |
+| Naming confusion: readers treat this companion as the Microsoft product | Identify Microsoft AGT as the subject, link [the official repository](https://github.com/microsoft/agent-governance-toolkit), and distinguish local implementation from upstream behavior | Repository owner |
+| False denials or excessive approvals frustrate users | Measure task completion, false-denial rate, review time, and exception demand; revise overly broad rules | Governance product owner |
+| Agent adoption has no support or risk owner | Establish mandate, escalation, on-call response, and revocation before expanding scope | Director / sponsor |
+| “Passed the lab” becomes “production secure” or “compliant” | Preserve tested scope and evidence state; use independent challenge and the [maturity model](maturity-model.md) | Assurance / risk |
+| Synthetic savings become a business-case fact | Measure accepted outcomes and full costs, reconcile billing, and distinguish recommendations from realized value | FinOps / business owner |
+| Public examples expose client or tenant information | Keep teaching fixtures synthetic; classify and restrict real inventory, identities, topology, and cost data | Data / repository owner |
+| Exceptions or controls persist without review | Assign expiry, owner, usage review, and retirement triggers | Control / exception owner |
 
-### Hierarchy changes are operating-model changes
+Use the [upstream changelog](https://github.com/microsoft/agent-governance-toolkit/blob/main/CHANGELOG.md), [breaking changes](https://github.com/microsoft/agent-governance-toolkit/blob/main/BREAKING_CHANGES.md), and this repository's [source register](source-register.md) as review inputs. A newer source claim is not a substitute for observing the installed version.
 
-Moving a subscription changes inherited policy and possibly access. Model the effective before-and-after state; do not treat the move as administrative housekeeping.
+## Azure platform supplement
 
-### Resource Graph is a view, not a transaction log
+| Risk | Review action | Owner |
+|---|---|---|
+| Broad or inherited permissions permit work outside the intended scope | Inspect effective access and inheritance; separate discovery from mutation credentials | IAM / platform |
+| Resource policy or remediation disrupts existing workloads | Baseline first, test representative workloads, stage exposure, review remediation permissions, and exercise recovery | Control / workload |
+| Inventory omits resources or lags a recent change | State visible versus expected scope and freshness; reconcile important results with an authoritative source | Evidence owner |
+| Cost reports lag work or omit allocation context | Record billing period, agreement, shared-cost method, and unresolved differences | FinOps |
+| Budget alerts are mistaken for a hard spending cap | Design any stop/degrade action separately with authority and workload-criticality checks | FinOps / workload |
+| Logs, security services, and review queues cost more than the claimed benefit | Include platform and human operating cost in the value ledger | Product / finance |
 
-Resource Graph is efficient for governance inventory, but results are authorization-trimmed and indexed with latency. Persist evidence intentionally if the review needs longer history or point-in-time reconstruction.
+These risks remain even when agent policy behaves correctly. Azure RBAC grants scoped permissions, Azure Policy governs supported resource properties/actions, and Resource Graph returns a permission-dependent, eventually consistent view. [RBAC](https://learn.microsoft.com/en-us/azure/role-based-access-control/overview), [Azure Policy](https://learn.microsoft.com/en-us/azure/governance/policy/overview), [Resource Graph](https://learn.microsoft.com/en-us/azure/governance/resource-graph/overview). The [FinOps guide](finops.md) explains cost and budget limitations.
 
-### Blueprints is not a foundation for new work
+## Gate for expanding a pilot
 
-Microsoft states that Azure Blueprints is retiring on January 31, 2027, following phased retirement that began July 31, 2026. Use current infrastructure-as-code, template spec, and deployment-stack patterns after evaluating their own trade-offs.
-
-## Organizational challenges
-
-### Control without authority
-
-A governance team that can identify risk but cannot resolve ownership, funding, or noncompliance will produce dashboards rather than outcomes. Define mandate and escalation before scaling tools.
-
-### Authority without feedback
-
-A central team that can enforce policy but does not measure workload impact will create brittle standards. Track false positives, onboarding time, support demand, and exception patterns.
-
-### Evidence without interpretation
-
-More telemetry does not automatically improve assurance. Define what decision each data source supports, how fresh it must be, who reviews it, and when it may be deleted.
-
-### Efficiency without value
-
-Reducing resource cost can harm performance, resilience, or security. Pair every cost decision with business outcome and quality constraints.
-
-## Decision test
-
-Before introducing or scaling a control, ask:
-
-1. What measurable outcome or risk justifies it?
-2. What lower-friction alternative was considered?
-3. Is the chosen scope the smallest effective scope?
-4. What could this control break?
-5. How was representative behavior tested?
-6. Who can approve and who can reverse it?
-7. How will exceptions expire?
-8. What evidence can be wrong, late, or incomplete?
-9. What does the full lifecycle cost?
-10. What observed result will cause scale, revision, or retirement?
+For each added tool or scope, record its business outcome, smallest effective authority, trusted inputs, alternate paths, failure behavior, representative tests, evidence, full cost, and containment owner. Close or explicitly accept material gaps through the [operating model](operating-model.md). Expand only when useful outcomes and operational evidence justify the remaining risk and burden.

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "vm-lab-01",
+    "type": "Microsoft.Compute/virtualMachines",
+    "resource_group": "rg-agt-lab",
+    "classification": "internal",
+    "monthly_cost_usd": 48.0,
+    "public_network_access": false,
+    "tags": {"owner": "platform-team", "cost_center": "LAB-100", "environment": "sandbox"}
+  },
+  {
+    "id": "storage-lab-01",
+    "type": "Microsoft.Storage/storageAccounts",
+    "resource_group": "rg-agt-lab",
+    "classification": "public",
+    "monthly_cost_usd": 5.0,
+    "public_network_access": true,
+    "tags": {"owner": "learning-team", "environment": "sandbox"}
+  },
+  {
+    "id": "db-restricted-01",
+    "type": "Microsoft.Sql/servers/databases",
+    "resource_group": "rg-agt-lab",
+    "classification": "restricted",
+    "monthly_cost_usd": 120.0,
+    "public_network_access": false,
+    "tags": {"owner": "data-team", "cost_center": "LAB-200", "environment": "sandbox"}
+  },
+  {
+    "id": "vm-prod-01",
+    "type": "Microsoft.Compute/virtualMachines",
+    "resource_group": "rg-production",
+    "classification": "internal",
+    "monthly_cost_usd": 240.0,
+    "public_network_access": false,
+    "tags": {"owner": "production-team", "cost_center": "PROD-100", "environment": "production"}
+  }
+]

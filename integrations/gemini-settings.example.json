@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "agt-lab": {
+      "command": "/absolute/repo/.venv/bin/python",
+      "args": ["/absolute/repo/integrations/mcp_server.py"],
+      "timeout": 30000,
+      "trust": false
+    }
+  }
+}

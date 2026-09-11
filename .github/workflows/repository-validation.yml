@@ -1,21 +1,67 @@
-name: Repository validation
+name: AGT architecture lab validation
 
 on:
   pull_request:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
-    runs-on: windows-latest
+  lab:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements*.txt
+
+      - name: Install lab and test dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Verify runtime, MCP stdio and decision schemas
+        run: python -m unittest discover -s tests -v
+
+      - name: Run offline evidence demo
+        run: python -m lab demo --output artifacts/ci
+
       - name: Validate required files, JSON, and local links
         shell: pwsh
         run: ./tests/Test-Repository.ps1
+
+      - name: Preserve synthetic demo evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: synthetic-evidence-${{ matrix.os }}
+          path: artifacts/ci/
+          retention-days: 7
+
+  upstream-agt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.11'
+      - name: Install pinned upstream AGT in the isolated job
+        run: python -m pip install -r examples/upstream-agt/requirements.txt
+      - name: Verify dependency compatibility
+        run: python -m pip check
+      - name: Verify actual AGT allow and deny behavior
+        run: python examples/upstream-agt/run.py

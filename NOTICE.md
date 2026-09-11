@@ -1,20 +1,11 @@
-# Project notice
+# Attribution and project scope
 
-Governance Evidence Lab is an independent personal learning project authored by Shibin Antony from public sources and original analysis. It is not affiliated with, authorized, sponsored, or approved by Microsoft Corporation.
+**Microsoft Agent Governance Toolkit (AGT) — Architecture Review & Hands-on Lab** is an independent educational companion authored by Shibin Antony. The title identifies the subject being studied. This repository is not authored, maintained, sponsored, or endorsed by Microsoft.
 
-Microsoft, Azure, Microsoft Entra, and other Microsoft product names are trademarks of the Microsoft group of companies. They are used only to identify the platforms and services discussed.
+Microsoft's implementation is [microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit); its [documentation](https://microsoft.github.io/agent-governance-toolkit/) and [charter](https://github.com/microsoft/agent-governance-toolkit/blob/main/CHARTER.md) remain authoritative for that project. AGT expands to **Agent Governance Toolkit**. Azure resource governance is a related, separate subject.
 
-This project is not Microsoft's Agent Governance Toolkit and does not use the acronym `AGT`. Microsoft’s official Agent Governance Toolkit charter states that “Agent Governance Toolkit” and “AGT” are trademarks.
+Microsoft, Azure, Agent Governance Toolkit, AGT, OpenAI, Codex, Google, and Gemini identify their respective owners' products or projects. No vendor logos or endorsement marks are used here.
 
-The project name is provisional and should receive a reasonable namespace, employer-obligation, and legal review before public launch.
+The Python policy emulator, its YAML format, PROVE method and decision contracts are this lab's educational implementation. They do not implement the full Agent Control Specification and are not interchangeable with AGT policies. MCP supplies the client connection; this does not imply a native AGT adapter for every named client. Any separate upstream example identifies its actual dependency and version.
 
-Only public sources, original work, and synthetic examples may be committed. Never include:
-
-- client, employer, partner, or confidential project information;
-- real tenant, subscription, resource, billing, identity, network, or security details;
-- secrets, access tokens, credentials, or private endpoints;
-- screenshots or diagrams copied from restricted material;
-- third-party source code, policy definitions, icons, or diagrams without license review and attribution; or
-- claims of Microsoft, regulator, auditor, or employer endorsement.
-
-The material is educational and does not constitute legal, security, compliance, financial, or professional advice.
+Only original analysis, public references and synthetic examples belong in this repository. Keep credentials, real tenant/billing/identity data, confidential architecture, employer or client material, and private conversation records out of commits. Linked materials retain upstream licenses; original lab material retains [its existing license](LICENSE.md).

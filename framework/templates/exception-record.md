@@ -35,6 +35,10 @@
 | Expiry date | [YYYY-MM-DD] |
 | Conditions | [Required evidence, milestones, or limits] |
 | Azure exemption reference | [Reference; no real ID in public examples] |
+| Agent / tool / action digest | [Exact runtime request and policy version, when relevant] |
+| Approval expiry and replay control | [One-time authorization scope and trusted verifier] |
+
+An Azure Policy exemption and an agent-action approval are separate decisions. This template documents authority; it is not an executable approval token.
 
 ## Monitoring and closure
 

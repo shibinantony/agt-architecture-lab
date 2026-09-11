@@ -1,99 +1,40 @@
 # Roadmap
 
-The roadmap advances by evidence, not by date alone.
+The current milestone is an executable learning companion to Microsoft Agent Governance Toolkit. Progress is measured by observed behavior in a stated scope.
 
-## Phase 0 — Foundation
+## Delivered: local architecture review and lab
 
-**Goal:** establish a safe, independent project boundary.
+- Correct AGT naming, explicit Microsoft repository links and version-aware reference.
+- Beginner, intermediate and advanced engineering exercises; architect, director and CXO routes.
+- Original strict YAML policy emulator with synthetic tools, default denial, approval stops, scope/classification checks and a cumulative local allowance.
+- Structured evidence, summaries and negative/concurrency/failure tests.
+- Stdio MCP server and real protocol tests for client integration.
+- Separate pinned actual Microsoft AGT 4.1.0 example with verified allow/deny behavior.
+- Enterprise architecture, FinOps worked example, ownership, control catalog and agent decision contract.
+- CI jobs for the emulator, MCP, documents, schema and upstream example.
 
-- [x] Product scope and non-goals
-- [x] Executive brief
-- [x] PROVE method and Governance Decision Contract schema
-- [x] Source register and freshness rules
-- [x] Initial control, challenge, FinOps, and maturity models
-- [x] Confidentiality, trademark, contribution, and license boundaries
-- [ ] Final project-name clearance
-- [ ] Intentional public code and documentation license decision
+See [validation](docs/validation.md) for local and CI evidence. Documentation of a design is not a completed deployment.
 
-## Phase 1 — v0.1 read-only governance baseline
+## Next: real client acceptance
 
-**Goal:** produce a repeatable baseline without changing Azure.
+Run the documented workflow through an authenticated Codex and Gemini CLI session. Preserve client version, requested tool, server evidence and account/model cost boundary. No universal client interception claim follows from this test.
 
-- [x] Initial Resource Graph inventory and tag queries
-- [ ] Synthetic estate fixture
-- [ ] PowerShell 7 assessment command
-- [ ] Normalized evidence snapshot schema
-- [ ] Human-readable baseline report
-- [ ] Permission and coverage reporting
-- [ ] Sanitization tests
-- [ ] Offline fixture tests
-- [ ] Reader-only sandbox validation
+**Exit gate:** a reviewer can distinguish client refusal, server denial, actual execution and provider usage.
 
-**Exit gates:** zero Azure writes; incomplete scope is visible; outputs contain no secrets or real identifiers; the same fixture produces the same result; every recommendation maps to evidence, an owner, and a validation action.
+## Next: upstream ACS evaluation
 
-## Phase 2 — v0.2 audit-only sandbox canary
+Choose a matching source/package/schema/adapter combination from the [upstream reference](docs/agt-reference.md). Exercise verdicts, transformed arguments, all bound intervention points, errors and upgrade compatibility in an isolated environment.
 
-**Goal:** test a small guardrail set safely.
+**Exit gate:** observed behavior for the selected API and workload; no mixing of released wrapper YAML with current ACS examples.
 
-- [ ] Choose Bicep or Terraform reference path and record the decision
-- [ ] Add policy-as-code validation
-- [ ] Prefer built-in policy definitions where suitable
-- [ ] Validate `what-if` or `plan` output
-- [ ] Assign only audit or disabled enforcement at narrow sandbox scope
-- [ ] Test exceptions, rollback, and teardown
-- [ ] Measure false positives, application impact, and operating effort
+## Next: operated sandbox pilot
 
-**Exit gates:** representative tests pass; deployment and rollback identities are least-privileged; no broad assignment; evidence is reconstructable; workload owner approves the observed impact.
+Add authenticated identity, protected policy/evidence, shared durable metering, independently verified approvals where needed, and isolated tool execution. Start with an approved read-only workflow. Exercise bypass, timeout, retry, logging outage, containment and recovery.
 
-## Phase 3 — v0.3 exceptions and evidence operations
+**Exit gate:** owned operations, accepted results, known coverage, measured cost/friction and reviewed residual risk.
 
-**Goal:** make the control lifecycle operable.
+## Later: scale and reuse
 
-- [ ] Machine-readable exemption record and expiry checks
-- [ ] Evidence correlation and retention design
-- [ ] Policy-version monitoring
-- [ ] Remediation workflow with narrow permissions
-- [ ] Support service levels and escalation path
-- [ ] Control-owner review cadence
+Integrate broader Azure controls, financial exports and enterprise evidence systems only after the pilot establishes need. Select intentional code/documentation licenses before changing reuse or contribution rights; current [license terms](LICENSE.md) remain in force.
 
-## Phase 4 — v0.4 FinOps integration
-
-**Goal:** govern both cloud cost and governance cost.
-
-- [ ] Allocation and tag-quality scorecard
-- [ ] Budget and anomaly response contract
-- [ ] Advisor recommendation realization tracking
-- [ ] Microsoft FinOps toolkit integration pattern
-- [ ] Unit-economics example using synthetic data
-- [ ] Governance cost and delivery-friction ledger
-
-## Phase 5 — limited multi-subscription pilot
-
-**Goal:** test portability and operating ownership with explicit authorization.
-
-- [ ] Nonproduction multi-subscription scope
-- [ ] Subscription-vending integration pattern
-- [ ] Progressive policy exposure
-- [ ] Quarterly control review
-- [ ] Sanitized public lessons and observed limitations
-
-## Later candidates
-
-- Optional Bicep and Terraform adapters
-- Defender for Cloud and Azure Monitor evidence adapters
-- Policy Insights queries and dashboards
-- Deployment stacks evaluation with safe unmanage defaults
-- Regulatory control mappings with explicit non-certification boundary
-- Community examples after contribution and license decisions
-
-## Maturity labels
-
-Use only these labels until a future decision changes them:
-
-- `concept`
-- `learning-prototype`
-- `locally-tested`
-- `sandbox-validated`
-- `limited-pilot`
-
-Do not use `production-ready`, `certified`, or `compliant` for this project without independently defined and evidenced criteria.
+Maturity labels are scoped: source-reviewed, fixture-tested, protocol-tested, upstream-example-tested, sandbox-observed and pilot-observed. None alone means production-ready.

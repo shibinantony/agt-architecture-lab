@@ -1,0 +1,3 @@
+-r requirements.txt
+# Maintained v1 API; upgrading to v2 requires migration.
+mcp==1.30.0
